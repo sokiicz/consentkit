@@ -1,0 +1,16 @@
+{
+  "name": "consentkit",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "pnpm --filter @consentkit/widget build && pnpm --filter @consentkit/server build",
+    "build:widget": "pnpm --filter @consentkit/widget build",
+    "dev": "concurrently \"pnpm --filter @consentkit/widget dev\" \"pnpm --filter @consentkit/server dev\"",
+    "start": "pnpm --filter @consentkit/server start",
+    "lint": "pnpm -r lint",
+    "zip": "node scripts/make-zip.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Website</title>
+
+  <!--
+    ╔══════════════════════════════════════════════════════════╗
+    ║  ConsentKit — copy these lines into your own HTML pages  ║
+    ╚══════════════════════════════════════════════════════════╝
+
+    data-config  → path to your consentkit.config.json file
+    data-log-url → path to consent-log.php  (remove this line
+                   if you don't want server-side logging)
+
+    Put these lines BEFORE any analytics or marketing scripts.
+    The defer attribute ensures it does not slow your page down.
+  -->
+  <script
+    src="/consentkit/widget.js"
+    data-config="/consentkit/consentkit.config.json"
+    data-log-url="/consentkit/consent-log.php"
+    defer
+  ></script>
+
+  <!--
+    ── Google Analytics example ────────────────────────────────
+    Use data-ck-category + data-ck-src instead of src.
+    The widget blocks the script until the visitor accepts
+    the "analytics" category.
+  -->
+  <script
+    data-ck-category="analytics"
+    data-ck-src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+    async
+  ></script>
+  <script>
+    // Inline init — also wrapped so it only runs after consent
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!--
+    ── Facebook Pixel example ──────────────────────────────────
+  -->
+  <script
+    data-ck-category="marketing"
+    data-ck-src="https://connect.facebook.net/en_US/fbevents.js"
+    async
+  ></script>
+
+</head>
+<body>
+
+  <h1>Welcome to my website</h1>
+  <p>This is a demo page showing how ConsentKit works.</p>
+
+  <!--
+    ── YouTube embed example ───────────────────────────────────
+    data-ck-category="functional" keeps the iframe blank until
+    the visitor accepts functional cookies.
+  -->
+  <iframe
+    data-ck-category="functional"
+    data-ck-src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+    width="560"
+    height="315"
+    frameborder="0"
+    allowfullscreen
+  ></iframe>
+
+</body>
+</html>

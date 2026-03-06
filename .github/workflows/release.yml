@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build widget
+        run: pnpm --filter @consentkit/widget build
+
+      # ftp/ now contains widget.js (copied by build.mjs)
+      # Package it as consentkit-ftp-<version>.zip
+      - name: Create FTP zip
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          mkdir -p dist
+          cd ftp
+          zip -r "../dist/consentkit-ftp-${VERSION}.zip" \
+            widget.js \
+            consentkit.config.json \
+            consent-log.php \
+            embed-example.html \
+            README.md
+          cd ..
+          echo "ZIP_NAME=consentkit-ftp-${VERSION}.zip" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ConsentKit ${{ github.ref_name }}
+          body: |
+            ## ConsentKit ${{ github.ref_name }}
+
+            ### FTP / Static hosting (no Node.js required)
+            Download **consentkit-ftp-${{ github.ref_name }}.zip**, unzip it,
+            edit `consentkit.config.json`, upload to your server, paste one script tag.
+            See `README.md` inside the zip for full instructions.
+
+            ### Self-hosted Node.js / Vercel
+            Clone the repo and follow the main [README](https://github.com/sokiicz/consentkit#quick-start-nodejs--vercel).
+          files: dist/${{ env.ZIP_NAME }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
