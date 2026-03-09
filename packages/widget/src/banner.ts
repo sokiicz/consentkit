@@ -103,16 +103,28 @@ const STYLES = (cfg: ConsentKitConfig): string => `
   .ck-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
   .ck-btn:hover { filter: brightness(1.12); }
 
-  /* Accept All and Reject All must have identical visual weight */
-  .ck-btn-accept, .ck-btn-reject {
+  /* Accept All — prominent CTA */
+  .ck-btn-accept {
     background: ${cfg.banner.accentColor};
     color: #fff;
+    border-color: ${cfg.banner.accentColor};
   }
+  /* Decline All — plain, no border highlight */
+  .ck-btn-reject {
+    background: transparent;
+    color: ${cfg.banner.textColor};
+    border-color: transparent;
+    opacity: 0.6;
+  }
+  .ck-btn-reject:hover { opacity: 0.9; filter: none; }
   .ck-btn-customize {
     background: transparent;
     color: ${cfg.banner.textColor};
-    border-color: rgba(255,255,255,0.35);
+    border-color: transparent;
+    opacity: 0.4;
+    font-size: 13px;
   }
+  .ck-btn-customize:hover { opacity: 0.7; filter: none; }
 
   /* === Preferences panel === */
   .ck-prefs {
@@ -393,9 +405,9 @@ export class ConsentBanner {
     customizeBtn.setAttribute('aria-expanded', 'false');
     customizeBtn.setAttribute('aria-controls', 'ck-prefs-panel');
 
-    // Order: Reject | Accept | Customize — equal prominence
-    actions.appendChild(rejectBtn);
+    // Order: Accept | Decline | Customize — Accept is prominent CTA
     actions.appendChild(acceptBtn);
+    actions.appendChild(rejectBtn);
     actions.appendChild(customizeBtn);
 
     this.layer1.appendChild(actions);
