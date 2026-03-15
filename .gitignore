@@ -4,7 +4,7 @@ node_modules/
 dist/
 data/
 *.db
-# consentkit.config.json is committed — no secrets, just branding config
+consentkit.config.json
 .env
 .env.local
 .vercel
@@ -16,4 +16,3 @@ ftp/consent-log.csv
 # Widget build outputs
 packages/widget/dist/
 apps/server/public/widget.js
-app-meta.json
