@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "lang": "en",
+  "geo": {
+    "showInGDPRCountries": true,
+    "showInCCPAStates": true,
+    "showGlobally": false
+  },
+  "banner": {
+    "position": "bottom-bar",
+    "title": "We use cookies, not chaos",
+    "description": "Just the basics — authentication keeps you signed in, analytics help us fix things faster. Nothing creepy, no ads. You can change this any time.",
+    "acceptAllLabel": "All good",
+    "rejectAllLabel": "Necessary only",
+    "customizeLabel": "Customize",
+    "savePreferencesLabel": "Save",
+    "privacyPolicyUrl": "/privacy",
+    "primaryColor": "#1f1208",
+    "accentColor": "#f0522a",
+    "textColor": "#fffaf7",
+    "borderRadius": "16px",
+    "logoUrl": ""
+  },
+  "categories": [
+    {
+      "key": "necessary",
+      "label": "Necessary",
+      "description": "Keeps you signed in and the app working. Can't be turned off.",
+      "locked": true,
+      "defaultEnabled": true
+    },
+    {
+      "key": "analytics",
+      "label": "Analytics",
+      "description": "Helps us understand how people use the app so we can fix bugs and improve it. Fully anonymous.",
+      "locked": false,
+      "defaultEnabled": false
+    },
+    {
+      "key": "marketing",
+      "label": "Marketing",
+      "description": "Used to show relevant content outside the app. We don't run ads — this is off by default.",
+      "locked": false,
+      "defaultEnabled": false
+    },
+    {
+      "key": "functional",
+      "label": "Functional",
+      "description": "Enhanced features like embedded content. Disabled by default.",
+      "locked": false,
+      "defaultEnabled": false
+    }
+  ],
+  "consentLogging": {
+    "enabled": true,
+    "retentionDays": 1825
+  },
+  "googleConsentMode": {
+    "enabled": true,
+    "defaultAdStorage": "denied",
+    "defaultAnalyticsStorage": "denied",
+    "defaultFunctionalityStorage": "denied",
+    "defaultPersonalizationStorage": "denied",
+    "defaultAdUserData": "denied",
+    "defaultSecurityStorage": "granted"
+  },
+  "ccpa": {
+    "enabled": true,
+    "doNotSellLinkText": "Do Not Sell or Share My Personal Information"
+  }
+}
