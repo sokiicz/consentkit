@@ -650,7 +650,7 @@ export class ConsentBanner {
         border-radius: 50%;
         background: ${this.config.banner.accentColor};
         border: none;
-        cursor: pointer;
+        cursor: grab;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -658,6 +658,9 @@ export class ConsentBanner {
         z-index: 2147483645;
         transition: transform 0.2s, box-shadow 0.2s;
         color: #fff;
+        touch-action: none;
+        user-select: none;
+        overflow: visible;
       }
       .ck-reopener:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
       .ck-reopener:focus-visible { outline: 3px solid ${this.config.banner.primaryColor}; outline-offset: 3px; }
@@ -680,6 +683,108 @@ export class ConsentBanner {
       this.remount();
     });
     shadow.appendChild(btn);
+
+    this.initDraggable(btn, shadow, () => reopenerHost.remove());
+  }
+
+  private initDraggable(btn: HTMLElement, shadow: ShadowRoot, onDismiss: () => void): void {
+    // Session-dismiss: hide immediately if the user already dragged it away
+    try {
+      if (sessionStorage.getItem('ck-gone')) { btn.style.display = 'none'; return; }
+    } catch { /* */ }
+
+    // Drag hint (bouncing ↓ arrow) on mobile — shown once per session
+    try {
+      const hintSeen = sessionStorage.getItem('ck-hint-seen');
+      if (!hintSeen && window.innerWidth <= 768) {
+        const hintStyle = document.createElement('style');
+        hintStyle.id = 'ck-hint-style';
+        hintStyle.textContent = [
+          '.ck-reopener::after {',
+          '  content: "↓";',
+          '  position: absolute;',
+          '  bottom: -18px;',
+          '  left: 50%;',
+          '  transform: translateX(-50%);',
+          '  font-size: 11px;',
+          '  font-weight: 700;',
+          '  color: rgba(255,255,255,0.85);',
+          '  text-shadow: 0 1px 4px rgba(0,0,0,0.4);',
+          '  pointer-events: none;',
+          '  animation: ck-bob 1.1s ease-in-out infinite;',
+          '}',
+          '@keyframes ck-bob {',
+          '  0%,100% { transform: translateX(-50%) translateY(0); }',
+          '  50%      { transform: translateX(-50%) translateY(4px); }',
+          '}',
+        ].join('');
+        shadow.appendChild(hintStyle);
+
+        const removeHint = () => {
+          shadow.querySelector('#ck-hint-style')?.remove();
+          try { sessionStorage.setItem('ck-hint-seen', '1'); } catch { /* */ }
+        };
+        btn.addEventListener('mousedown',  removeHint, { once: true });
+        btn.addEventListener('touchstart', removeHint, { once: true, passive: true });
+      }
+    } catch { /* */ }
+
+    let sx = 0, sy = 0, bx = 0, by = 0, dragging = false, moved = false;
+
+    const start = (cx: number, cy: number) => {
+      const r = btn.getBoundingClientRect();
+      sx = cx; sy = cy; bx = r.left; by = r.top;
+      dragging = true; moved = false;
+      btn.style.transition = 'none';
+      btn.style.left = `${bx}px`; btn.style.top = `${by}px`;
+      btn.style.right = 'auto'; btn.style.bottom = 'auto';
+      btn.style.cursor = 'grabbing';
+    };
+
+    const move = (cx: number, cy: number) => {
+      if (!dragging) return;
+      const dx = cx - sx, dy = cy - sy;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+      btn.style.left = `${bx + dx}px`;
+      btn.style.top  = `${by + dy}px`;
+      // Fade out as it approaches the bottom edge
+      const fade = Math.max(0, 1 - Math.max(0, cy - window.innerHeight * 0.72) / (window.innerHeight * 0.28));
+      btn.style.opacity = String(fade);
+    };
+
+    const end = (cy: number) => {
+      if (!dragging) return;
+      dragging = false; btn.style.cursor = 'grab';
+      if (moved && cy > window.innerHeight * 0.82) {
+        // Dragged to bottom — dismiss for session
+        btn.style.transition = 'transform 0.2s ease-in, opacity 0.2s ease-in';
+        btn.style.transform = 'translateY(100px)'; btn.style.opacity = '0';
+        setTimeout(() => { onDismiss(); }, 220);
+        try { sessionStorage.setItem('ck-gone', '1'); } catch { /* */ }
+      } else {
+        btn.style.opacity = '1';
+      }
+    };
+
+    btn.addEventListener('mousedown', (e) => { start(e.clientX, e.clientY); });
+    document.addEventListener('mousemove', (e) => { move(e.clientX, e.clientY); });
+    document.addEventListener('mouseup',   (e) => { end(e.clientY); });
+
+    btn.addEventListener('touchstart', (e) => {
+      const t = e.touches[0]; start(t.clientX, t.clientY);
+    }, { passive: true });
+    document.addEventListener('touchmove', (e) => {
+      if (!dragging) return; e.preventDefault();
+      const t = e.touches[0]; move(t.clientX, t.clientY);
+    }, { passive: false });
+    document.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0]; end(t.clientY);
+    });
+
+    // Swallow click when the user was actually dragging (don't open the panel)
+    btn.addEventListener('click', (e) => {
+      if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+    }, true);
   }
 
   /** Call this when consent already exists on load — skips the banner, shows only the re-open icon. */
