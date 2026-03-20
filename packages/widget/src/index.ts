@@ -105,7 +105,7 @@ async function init(): Promise<void> {
     if (existing) {
       applyConsent(existing.choices);
       updateGCMConsent(config, existing.choices);
-      mountReopener(config, logUrl);
+      mountReopener(config, logUrl, existing.choices);
     }
     return;
   }
@@ -121,14 +121,14 @@ async function init(): Promise<void> {
   banner.mount();
 }
 
-function mountReopener(config: ConsentKitConfig, logUrl: string): void {
+function mountReopener(config: ConsentKitConfig, logUrl: string, existingChoices?: ConsentChoices): void {
   const banner = new ConsentBanner(config, async (choices: ConsentChoices) => {
     setConsent(config, choices);
     applyConsent(choices);
     updateGCMConsent(config, choices);
     await logConsentToServer(logUrl, config, choices);
   });
-  banner.mountReopenerOnly();
+  banner.mountReopenerOnly(existingChoices);
 }
 
 // ─── Kick off after DOM is ready ─────────────────────────────────────────────

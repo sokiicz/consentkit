@@ -272,6 +272,7 @@ export class ConsentBanner {
   private config: ConsentKitConfig;
   private onConsent: ConsentCallback;
   private overlay!: HTMLElement;
+  private skipReopener = false;
 
   constructor(config: ConsentKitConfig, onConsent: ConsentCallback) {
     this.config = config;
@@ -598,8 +599,15 @@ export class ConsentBanner {
     return choices;
   }
 
+  private allChoicesAccepted(choices: ConsentChoices): boolean {
+    return this.config.categories
+      .filter((c) => !c.locked)
+      .every((c) => choices[c.key] === true);
+  }
+
   private handleAcceptAll(): void {
     this.toggles.forEach((input) => { input.checked = true; });
+    this.skipReopener = true;
     this.onConsent(this.getChoices());
     this.dismiss();
   }
@@ -628,7 +636,7 @@ export class ConsentBanner {
     }
     setTimeout(() => {
       this.host.remove();
-      this.mountReopener();
+      if (!this.skipReopener) this.mountReopener();
     }, 350);
   }
 
@@ -787,8 +795,10 @@ export class ConsentBanner {
     }, true);
   }
 
-  /** Call this when consent already exists on load — skips the banner, shows only the re-open icon. */
-  mountReopenerOnly(): void {
+  /** Call this when consent already exists on load — skips the banner, shows only the re-open icon.
+   *  Pass the stored choices so we can skip the icon entirely when all cookies are accepted. */
+  mountReopenerOnly(choices?: ConsentChoices): void {
+    if (choices && this.allChoicesAccepted(choices)) return;
     this.mountReopener();
   }
 
