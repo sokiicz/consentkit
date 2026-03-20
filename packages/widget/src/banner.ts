@@ -623,7 +623,9 @@ export class ConsentBanner {
   }
 
   private handleSavePrefs(): void {
-    this.onConsent(this.getChoices());
+    const choices = this.getChoices();
+    if (this.allChoicesAccepted(choices)) this.skipReopener = true;
+    this.onConsent(choices);
     this.dismiss();
   }
 
