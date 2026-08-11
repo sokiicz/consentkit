@@ -9,6 +9,7 @@
 [![Google Consent Mode v2](https://img.shields.io/badge/Google%20Consent%20Mode-v2-orange.svg)](#google-consent-mode-v2-setup)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/sokiicz/consentkit/pulls)
 [![Widget size](https://img.shields.io/badge/widget-<10KB%20gzip-blue)](#)
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-FFDD00)](https://buymeacoffee.com/sokii)
 
 No SaaS. No dashboard. No monthly fees. No data leaving your server.
 
