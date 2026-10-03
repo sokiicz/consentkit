@@ -22,7 +22,7 @@
 
 - The FTP ZIP also contains the Czech example config and an `.htaccess` that keeps `consent-log.csv` from being downloaded on Apache hosts.
 - The release workflow builds from a lockfile and creates the GitHub release as a draft, to be published by hand.
-- README and docs no longer claim "GDPR Compliant", "zero dark patterns" or a comparison with named competitors.
+- README and docs no longer claim "GDPR Compliant" or "zero dark patterns", and the comparison table no longer rates other products on dark patterns or GPC support.
 
 ### Upgrading
 

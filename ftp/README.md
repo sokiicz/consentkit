@@ -122,7 +122,7 @@ in the same folder. Download it via your hosting file manager and open in Excel.
 
 **Keep the CSV private.** It holds visitor IDs and browser strings. Upload the
 `.htaccess` file from the ZIP into the same folder (Apache hosts, which is most
-shared hosting). On nginx it does nothing: move the CSV outside the web root or
+shared hosting); if that folder already has an `.htaccess`, append its lines instead of overwriting it. On nginx it does nothing: move the CSV outside the web root or
 block it in the server config. Check by opening `/consentkit/consent-log.csv` in
 your browser: you should get "403 Forbidden", not a download.
 
