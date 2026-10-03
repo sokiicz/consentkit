@@ -16,3 +16,6 @@ ftp/consent-log.csv
 # Widget build outputs
 packages/widget/dist/
 apps/server/public/widget.js
+
+# Workspace tracker metadata (local only)
+app-meta.json
