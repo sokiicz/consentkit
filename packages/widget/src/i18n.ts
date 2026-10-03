@@ -18,12 +18,12 @@ const EN: UiStrings = {
 
 const CS: UiStrings = {
   logoAlt: 'Logo',
-  learnMore: 'Zjistit více',
+  learnMore: 'Více v zásadách',
   preferencesTitle: 'Nastavení cookies',
   backToBanner: 'Zpět na lištu',
   alwaysOn: 'Vždy zapnuto',
   categoryToggle: 'Cookies: {label}',
-  reopenerLabel: 'Spravovat nastavení cookies',
+  reopenerLabel: 'Nastavení cookies',
 };
 
 const TABLES: Record<string, UiStrings> = { en: EN, cs: CS };

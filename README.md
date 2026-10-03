@@ -271,12 +271,12 @@ Banner title, description, button labels and category texts come from your confi
 | Key | `en` | `cs` |
 |---|---|---|
 | `logoAlt` | Logo | Logo |
-| `learnMore` | Learn more | Zjistit více |
+| `learnMore` | Learn more | Více v zásadách |
 | `preferencesTitle` | Cookie Preferences | Nastavení cookies |
 | `backToBanner` | Back to cookie banner | Zpět na lištu |
 | `alwaysOn` | Always On | Vždy zapnuto |
 | `categoryToggle` | {label} cookies | Cookies: {label} |
-| `reopenerLabel` | Manage cookie preferences | Spravovat nastavení cookies |
+| `reopenerLabel` | Manage cookie preferences | Nastavení cookies |
 
 Override any of them, or write your own language, with `strings`:
 
