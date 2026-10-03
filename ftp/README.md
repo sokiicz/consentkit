@@ -13,6 +13,7 @@ No Node.js. No server. No account required.
 | `consentkit.config.json` | **Your config — edit this** |
 | `consentkit.config.cs.example.json` | Same config with Czech texts, copy it over `consentkit.config.json` for a Czech banner |
 | `consent-log.php` | Optional: logs consent records to a CSV file |
+| `.htaccess` | Optional, with the log: keeps `consent-log.csv` from being downloaded (Apache) |
 | `embed-example.html` | Copy-paste examples for your pages |
 
 ---
@@ -119,9 +120,15 @@ Available categories: `necessary` (always on), `analytics`, `marketing`, `functi
 If you uploaded `consent-log.php`, consent events are saved to `consent-log.csv`
 in the same folder. Download it via your hosting file manager and open in Excel.
 
+**Keep the CSV private.** It holds visitor IDs and browser strings. Upload the
+`.htaccess` file from the ZIP into the same folder (Apache hosts, which is most
+shared hosting). On nginx it does nothing: move the CSV outside the web root or
+block it in the server config. Check by opening `/consentkit/consent-log.csv` in
+your browser: you should get "403 Forbidden", not a download.
+
 Columns: `visitor_id`, `timestamp`, `choices`, `banner_version`, `user_agent`, `logged_at`
 
-Records older than 5 years are automatically deleted (GDPR requirement).
+Records older than 5 years are automatically deleted. That period is the default in `consent-log.php` (`$retentionDays`), the `consentLogging.retentionDays` field of the config is not read by the PHP script.
 
 ---
 

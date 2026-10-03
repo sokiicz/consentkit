@@ -16,8 +16,10 @@
  *   Or download it from your hosting file manager.
  *
  * SECURITY:
- *   Rename or move consent-log.csv outside the web root if your host allows it.
- *   The script does NOT allow reading the log via HTTP — POST only.
+ *   consent-log.csv lies next to this script and holds visitor IDs and browser strings.
+ *   The .htaccess from the ZIP denies web access to it on Apache. On nginx and other
+ *   servers it does nothing: move the CSV outside the web root or block it in the server config.
+ *   This script itself only accepts POST and never returns log rows.
  */
 
 // ── CORS headers (widget may be on a different domain) ────────────────────────

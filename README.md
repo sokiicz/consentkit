@@ -5,7 +5,7 @@
 **Self-hosted, open-source cookie consent management**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![GDPR Compliant](https://img.shields.io/badge/GDPR-Compliant-green.svg)](#compliance-guide)
+[![GDPR opt-in by default](https://img.shields.io/badge/GDPR-opt--in%20by%20default-green.svg)](#compliance-guide)
 [![Google Consent Mode v2](https://img.shields.io/badge/Google%20Consent%20Mode-v2-orange.svg)](#google-consent-mode-v2-setup)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/sokiicz/consentkit/pulls)
 [![Widget size](https://img.shields.io/badge/widget-<10KB%20gzip-blue)](#)
@@ -35,8 +35,6 @@ It is a single embeddable JavaScript file + a JSON config. That's it.
 | Works on FTP hosting | ✅ | ❌ | ❌ | ❌ |
 | GDPR opt-in by default | ✅ | ✅ | ✅ | ✅ |
 | Google Consent Mode v2 | ✅ | ✅ | ✅ | ✅ |
-| Dark-pattern free | ✅ | ⚠️ | ⚠️ | ⚠️ |
-| GPC / DNT signal support | ✅ | ❌ | ❌ | ❌ |
 
 ---
 
@@ -51,7 +49,7 @@ It is a single embeddable JavaScript file + a JSON config. That's it.
 - **CCPA "Do Not Sell" link** — built into the banner footer
 - **Always a way to withdraw consent** — a re-open button is shown once consent exists (also after Accept All) and a visitor can drag it off screen for the rest of the browser session; or switch it off and link `ConsentKit.openPreferences()` from your footer or settings page
 - **Consent audit log** — timestamped, versioned records stored locally (SQLite or CSV)
-- **Zero dark patterns** — Accept All and Reject All are always identical in size, colour, and weight
+- **No hidden choice** — Accept All and Reject All sit side by side on the first layer with the same size, colour and weight, one click each. No pre-ticked boxes, no cookie wall
 - **< 10 KB gzipped** — a single minified JS file with zero dependencies
 - **Works everywhere** — Vercel, Railway, shared cPanel hosting, any PHP server, bare VPS
 
@@ -306,6 +304,8 @@ The panel opens with the visitor's current choices, and saving works exactly lik
 
 ## Compliance Guide
 
+ConsentKit is a tool, not legal advice, and a banner alone does not make a site compliant: that also depends on your texts, your categories and what your site really loads. Supervisory authorities differ on details such as button styling. If in doubt, ask your legal adviser.
+
 ### GDPR + ePrivacy (EU)
 
 - All non-necessary scripts blocked **before** any rendering
@@ -335,16 +335,17 @@ When `navigator.globalPrivacyControl === true` (Brave, Firefox + uBlock, DuckDuc
 
 Required under CPRA (California). Recommended best practice under GDPR.
 
-### Dark patterns explicitly prevented (hardcoded)
+### Hardcoded behaviour
 
-These rules cannot be overridden by any config option:
+These rules are in the widget code and cannot be changed by any config option:
 
 1. Accept All and Reject All always have **identical CSS**
-2. All non-necessary categories always default to **off**
-3. GCM v2 always defaults to `"denied"` before user interaction
-4. GPC always triggers silent reject-all
-5. Consent is never assumed from page interaction
-6. The re-open preferences button is rendered once consent exists, unless you set `banner.showReopenButton` to `false` and provide a link to `ConsentKit.openPreferences()` yourself
+2. GPC always triggers silent reject-all
+3. Consent is never assumed from page interaction
+
+One more rule is a default you may switch off, with a condition: the re-open preferences button is rendered once consent exists, unless you set `banner.showReopenButton` to `false` and provide your own link to `ConsentKit.openPreferences()`.
+
+The shipped config also starts with every non-necessary category off (`defaultEnabled: false`) and all Google Consent Mode defaults `denied` (except `security_storage`). Those are config values: keep them for an opt-in setup.
 
 ---
 

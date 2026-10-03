@@ -25,9 +25,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --filter @consentkit/widget --no-frozen-lockfile
+        run: pnpm install --filter @consentkit/widget --frozen-lockfile
 
       - name: Build widget
         run: pnpm --filter @consentkit/widget build
@@ -44,6 +45,7 @@ jobs:
             consentkit.config.json \
             consentkit.config.cs.example.json \
             consent-log.php \
+            .htaccess \
             embed-example.html \
             README.md
           cd ..
@@ -56,6 +58,8 @@ jobs:
           body: |
             ## ConsentKit ${{ github.ref_name }}
 
+            What changed: see [CHANGELOG.md](https://github.com/sokiicz/consentkit/blob/main/CHANGELOG.md).
+
             ### FTP / Static hosting (no Node.js required)
             Download **consentkit-ftp-${{ github.ref_name }}.zip**, unzip it,
             edit `consentkit.config.json`, upload to your server, paste one script tag.
@@ -64,5 +68,6 @@ jobs:
             ### Self-hosted Node.js / Vercel
             Clone the repo and follow the main [README](https://github.com/sokiicz/consentkit#quick-start-nodejs--vercel).
           files: dist/${{ env.ZIP_NAME }}
-          draft: false
+          # Draft on purpose: review the ZIP, then publish the release by hand.
+          draft: true
           prerelease: ${{ contains(github.ref_name, '-') }}

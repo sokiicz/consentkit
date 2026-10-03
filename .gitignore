@@ -29,4 +29,7 @@ PROJEKT.md
 
 # Secrets (workspace rule for every project)
 *.env
+.env.*
+!.env.example
 *.pem
+*.key

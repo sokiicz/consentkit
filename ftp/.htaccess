@@ -1,0 +1,12 @@
+# Keep the consent log out of reach from the web (Apache). It holds visitor IDs and
+# browser strings. On nginx or other servers this file does nothing: move
+# consent-log.csv outside the web root or block it in the server config.
+<Files "consent-log.csv">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</Files>

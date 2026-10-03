@@ -46,13 +46,13 @@ let success = false;
 
 if (hasCommand('zip')) {
   execSync(
-    `zip -j "${outPath}" widget.js consentkit.config.json consentkit.config.cs.example.json consent-log.php embed-example.html README.md`,
+    `zip -j "${outPath}" widget.js consentkit.config.json consentkit.config.cs.example.json consent-log.php .htaccess embed-example.html README.md`,
     { cwd: ftpDir, stdio: 'inherit' }
   );
   success = true;
 } else if (hasCommand('7z')) {
   execSync(
-    `7z a "${outPath}" widget.js consentkit.config.json consentkit.config.cs.example.json consent-log.php embed-example.html README.md`,
+    `7z a "${outPath}" widget.js consentkit.config.json consentkit.config.cs.example.json consent-log.php .htaccess embed-example.html README.md`,
     { cwd: ftpDir, stdio: 'inherit' }
   );
   success = true;
@@ -64,5 +64,5 @@ if (success) {
 } else {
   console.log('\nNo zip tool found.');
   console.log(`Manually zip the contents of the ftp/ folder and name it ${zipName}`);
-  console.log('Files to include: widget.js, consentkit.config.json, consentkit.config.cs.example.json, consent-log.php, embed-example.html, README.md\n');
+  console.log('Files to include: widget.js, consentkit.config.json, consentkit.config.cs.example.json, consent-log.php, .htaccess, embed-example.html, README.md\n');
 }
