@@ -73,7 +73,7 @@ const STYLES = (cfg: ConsentKitConfig): string => `
   .ck-desc { opacity: 0.88; margin: 0 0 16px; }
 
   .ck-link {
-    color: ${cfg.banner.accentColor};
+    color: ${cfg.banner.textColor};
     text-decoration: underline;
     cursor: pointer;
     background: none;
@@ -82,7 +82,7 @@ const STYLES = (cfg: ConsentKitConfig): string => `
     padding: 0;
   }
 
-  /* === Button row — equal styling enforced (GDPR dark-pattern prevention) === */
+  /* === Button row — Accept All and Reject All share one rule (GDPR dark-pattern prevention) === */
   .ck-actions {
     display: flex;
     gap: 8px;
@@ -102,22 +102,27 @@ const STYLES = (cfg: ConsentKitConfig): string => `
     text-align: center;
     white-space: nowrap;
   }
-  .ck-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .ck-btn:focus-visible { outline: 3px solid ${cfg.banner.textColor}; outline-offset: 2px; }
   .ck-btn:hover { filter: brightness(1.12); }
 
   /* Accept All and Reject All must have identical visual weight (GDPR dark-pattern
-     prevention). One rule for both so they cannot drift apart. */
-  .ck-btn-accept, .ck-btn-reject {
-    background: ${cfg.banner.accentColor};
-    color: #fff;
-    border-color: ${cfg.banner.accentColor};
+     prevention). One rule for both so they cannot drift apart. The fill is the banner's
+     text colour with the banner's background colour as label: contrast follows the
+     config, and the accent colour is left to toggles and links. Save Preferences is
+     the single button of the second layer and looks the same. */
+  .ck-btn-accept, .ck-btn-reject, .ck-btn-save {
+    background: ${cfg.banner.textColor};
+    color: ${cfg.banner.primaryColor};
+    border-color: ${cfg.banner.textColor};
   }
+  .ck-btn-accept:hover, .ck-btn-reject:hover, .ck-btn-save:hover { filter: brightness(0.92); }
   /* Customize is not a consent choice, but it stays fully visible and outlined. */
   .ck-btn-customize {
     background: transparent;
     color: ${cfg.banner.textColor};
     border-color: rgba(255,255,255,0.35);
   }
+  .ck-banner:focus { outline: none; }
 
   /* === Preferences panel === */
   .ck-prefs {
@@ -207,12 +212,7 @@ const STYLES = (cfg: ConsentKitConfig): string => `
     display: flex;
     gap: 8px;
   }
-  .ck-btn-save {
-    flex: 1;
-    background: ${cfg.banner.accentColor};
-    color: #fff;
-    border-color: ${cfg.banner.accentColor};
-  }
+  .ck-btn-save { flex: 1; }
 
   /* === CCPA footer === */
   .ck-ccpa {
@@ -333,7 +333,7 @@ export class ConsentBanner {
         if (this.config.banner.position === 'center-popup') {
           this.overlay.classList.add('visible');
         }
-        this.focusFirstButton();
+        this.focusDialog();
       });
     });
   }
@@ -554,13 +554,15 @@ export class ConsentBanner {
     this.prefsPanel.hidden = true;
     this.layer1.style.display = '';
     this.banner.setAttribute('aria-label', this.config.banner.title);
-    this.focusFirstButton();
+    this.focusDialog();
   }
 
-  private focusFirstButton(): void {
+  // Focus the dialog itself, not a button: Enter or Space right after the banner appears
+  // must not count as "Accept". Tab then moves to the first button.
+  private focusDialog(): void {
     requestAnimationFrame(() => {
-      const btn = this.root.querySelector<HTMLButtonElement>('button');
-      btn?.focus();
+      this.banner.setAttribute('tabindex', '-1');
+      this.banner.focus();
     });
   }
 
