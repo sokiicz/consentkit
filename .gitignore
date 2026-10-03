@@ -25,3 +25,8 @@ CLAUDE.md
 AGENTS.md
 STAV.md
 PROJEKT.md
+.mcp.json
+
+# Secrets (workspace rule for every project)
+*.env
+*.pem
