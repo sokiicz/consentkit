@@ -1,7 +1,7 @@
 /**
  * scripts/make-zip.mjs
  *
- * Builds the widget then packages ftp/ into dist/consentkit-ftp.zip.
+ * Builds the widget then packages ftp/ into dist/consentkit-ftp-v<version>.zip.
  * Run with: pnpm zip
  *
  * Requires: zip CLI (Linux/macOS) or 7z (Windows via Scoop/Chocolatey).

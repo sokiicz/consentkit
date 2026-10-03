@@ -399,7 +399,7 @@
         <tr><td>categories[].locked</td><td>boolean</td><td><code>true</code> = always on (use for necessary)</td></tr>
         <tr><td>categories[].defaultEnabled</td><td>boolean</td><td>Pre-selected state — set <code>false</code> for GDPR opt-in</td></tr>
         <tr><td>consentLogging.enabled</td><td>boolean</td><td>POST consent records to <code>consent-log.php</code></td></tr>
-        <tr><td>consentLogging.retentionDays</td><td>number</td><td>Auto-delete old records (default: 1825 = 5 years)</td></tr>
+        <tr><td>consentLogging.retentionDays</td><td>number</td><td>Auto-delete old records on the Node server (default: 1825 = 5 years). The PHP script has its own 5-year default</td></tr>
         <tr><td>googleConsentMode.enabled</td><td>boolean</td><td>Fire Google Consent Mode v2 signals</td></tr>
         <tr><td>ccpa.enabled</td><td>boolean</td><td>Show "Do Not Sell" link in banner footer</td></tr>
       </tbody>
