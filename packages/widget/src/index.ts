@@ -8,7 +8,7 @@
  */
 
 import { startBlocking, applyConsent } from './blocker';
-import { initGCMDefaults, updateGCMConsent } from './gcm';
+import { initGCMDefaults, updateGCMConsent, pushConsentUpdateEvent } from './gcm';
 import {
   hasConsent,
   getConsent,
@@ -111,23 +111,27 @@ async function init(): Promise<void> {
   }
 
   // ─── No consent yet — show banner ────────────────────────────────────────────
-  const banner = new ConsentBanner(config, async (choices: ConsentChoices) => {
-    setConsent(config, choices);
-    applyConsent(choices);
-    updateGCMConsent(config, choices);
-    await logConsentToServer(logUrl, config, choices);
-  });
+  const banner = new ConsentBanner(config, (choices) => handleVisitorChoice(config, logUrl, choices));
 
   banner.mount();
 }
 
+// Runs when the visitor decides (banner or re-opened preferences). Automatic GPC/DNT
+// rejects and stored consent applied on load are not visitor decisions and skip the event.
+async function handleVisitorChoice(
+  config: ConsentKitConfig,
+  logUrl: string,
+  choices: ConsentChoices
+): Promise<void> {
+  setConsent(config, choices);
+  applyConsent(choices);
+  updateGCMConsent(config, choices);
+  pushConsentUpdateEvent();
+  await logConsentToServer(logUrl, config, choices);
+}
+
 function mountReopener(config: ConsentKitConfig, logUrl: string, existingChoices?: ConsentChoices): void {
-  const banner = new ConsentBanner(config, async (choices: ConsentChoices) => {
-    setConsent(config, choices);
-    applyConsent(choices);
-    updateGCMConsent(config, choices);
-    await logConsentToServer(logUrl, config, choices);
-  });
+  const banner = new ConsentBanner(config, (choices) => handleVisitorChoice(config, logUrl, choices));
   banner.mountReopenerOnly(existingChoices);
 }
 

@@ -60,3 +60,16 @@ export function updateGCMConsent(
     security_storage: 'granted', // always granted — necessary
   });
 }
+
+/**
+ * Pushes a `consent_update` event after a visitor changes their consent. Tags that
+ * wait for consent only re-check on the next trigger, so without this event they
+ * would fire on the next page view instead of right after the click.
+ * No payload on purpose: the consent state itself travels in gtag('consent', 'update').
+ */
+export function pushConsentUpdateEvent(): void {
+  if (!window.dataLayer) {
+    window.dataLayer = [];
+  }
+  window.dataLayer.push({ event: 'consent_update' });
+}
