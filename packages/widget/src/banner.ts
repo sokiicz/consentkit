@@ -108,7 +108,7 @@ const STYLES = (cfg: ConsentKitConfig): string => `
   /* Accept All and Reject All must have identical visual weight (GDPR dark-pattern
      prevention). One rule for both so they cannot drift apart. The fill is the banner's
      text colour with the banner's background colour as label: contrast follows the
-     config, and the accent colour is left to toggles and links. Save Preferences is
+     config, and the accent colour is left to the toggle switches and the re-open button. Save Preferences is
      the single button of the second layer and looks the same. */
   .ck-btn-accept, .ck-btn-reject, .ck-btn-save {
     background: ${cfg.banner.textColor};
@@ -120,7 +120,8 @@ const STYLES = (cfg: ConsentKitConfig): string => `
   .ck-btn-customize {
     background: transparent;
     color: ${cfg.banner.textColor};
-    border-color: rgba(255,255,255,0.35);
+    border-color: ${cfg.banner.textColor};
+    border-color: color-mix(in srgb, ${cfg.banner.textColor} 45%, transparent);
   }
   .ck-banner:focus { outline: none; }
 

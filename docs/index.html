@@ -294,7 +294,7 @@
         <div class="step-num">1</div>
         <div class="step-body">
           <h3>Download the ZIP</h3>
-          <p>Go to the <a href="https://github.com/sokiicz/consentkit/releases/latest">Releases page</a> and download <code>consentkit-ftp-vX.X.X.zip</code>. Unzip it — you'll get four files.</p>
+          <p>Go to the <a href="https://github.com/sokiicz/consentkit/releases/latest">Releases page</a> and download <code>consentkit-ftp-vX.X.X.zip</code>. Unzip it — you'll get a handful of files.</p>
         </div>
       </div>
 
@@ -306,7 +306,7 @@
           <pre><span class="token-key">"title"</span>: <span class="token-string">"We use cookies"</span>,
 <span class="token-key">"description"</span>: <span class="token-string">"We use cookies to improve your experience..."</span>,
 <span class="token-key">"privacyPolicyUrl"</span>: <span class="token-string">"/privacy-policy"</span>,
-<span class="token-key">"accentColor"</span>: <span class="token-string">"#4f46e5"</span>  <span class="token-comment">← your brand colour</span></pre>
+<span class="token-key">"accentColor"</span>: <span class="token-string">"#4f46e5"</span>  <span class="token-comment">← toggle switches and re-open button</span></pre>
         </div>
       </div>
 
@@ -319,7 +319,8 @@
 └── consentkit/
     ├── widget.js
     ├── consentkit.config.json
-    └── consent-log.php   <span class="token-comment">← optional logging</span></pre>
+    ├── consent-log.php   <span class="token-comment">← optional logging</span>
+    └── .htaccess         <span class="token-comment">← with the log: keeps the CSV private (Apache)</span></pre>
         </div>
       </div>
 
@@ -391,7 +392,7 @@
         <tr><td>version</td><td>string</td><td>Bump to re-ask consent from returning visitors</td></tr>
         <tr><td>banner.position</td><td>string</td><td><code>bottom-bar</code> · <code>bottom-left</code> · <code>bottom-right</code> · <code>center-popup</code></td></tr>
         <tr><td>banner.primaryColor</td><td>string</td><td>Banner background colour (e.g. <code>#1a1a1a</code>)</td></tr>
-        <tr><td>banner.accentColor</td><td>string</td><td>Button &amp; toggle colour — use your brand colour</td></tr>
+        <tr><td>banner.accentColor</td><td>string</td><td>Colour of the toggle switches and the re-open button. Buttons use textColor and primaryColor</td></tr>
         <tr><td>banner.privacyPolicyUrl</td><td>string</td><td>Link shown in banner description</td></tr>
         <tr><td>banner.logoUrl</td><td>string</td><td>Optional logo image displayed in the banner header</td></tr>
         <tr><td>categories[].key</td><td>string</td><td>Used in <code>data-ck-category</code> attributes</td></tr>
@@ -410,11 +411,11 @@
 <section id="compliance">
   <div class="container">
     <h2>Compliance</h2>
-    <p class="section-sub">Built-in protections — not configurable, not bypassable.</p>
+    <p class="section-sub">Built into the widget code.</p>
     <div class="compliance-grid">
       <div class="compliance-card">
         <h3>GDPR / ePrivacy</h3>
-        <p>Opt-in only. All non-necessary scripts blocked before rendering. Accept and Reject buttons always identical in size and weight.</p>
+        <p>Opt-in by default. All non-necessary scripts blocked before rendering. Accept and Reject buttons always share one style: same height, font, colour and weight.</p>
       </div>
       <div class="compliance-card">
         <h3>CCPA / CPRA</h3>
@@ -422,7 +423,7 @@
       </div>
       <div class="compliance-card">
         <h3>Google Consent Mode v2</h3>
-        <p>All seven parameters (including <code>ad_personalization</code>) fired as <code>denied</code> before any user interaction, then updated on choice.</p>
+        <p>All seven parameters (including <code>ad_personalization</code>) fired before any user interaction (<code>denied</code> except <code>security_storage</code>), then updated on choice.</p>
       </div>
       <div class="compliance-card">
         <h3>Global Privacy Control</h3>

@@ -47,9 +47,9 @@ It is a single embeddable JavaScript file + a JSON config. That's it.
 - **Global Privacy Control** — auto-rejects without showing a banner when GPC is set
 - **Do Not Track** — honoured as reject-all
 - **CCPA "Do Not Sell" link** — built into the banner footer
-- **Always a way to withdraw consent** — a re-open button is shown once consent exists (also after Accept All) and a visitor can drag it off screen for the rest of the browser session; or switch it off and link `ConsentKit.openPreferences()` from your footer or settings page
+- **Always a way to withdraw consent** — a re-open button is shown once consent exists (also after Accept All) and a visitor can drag it off screen for the rest of the browser session; or switch it off and link `ConsentKit.openPreferences()` from your footer or settings page. Visitors whose browser sends GPC or DNT get no banner and no button, `openPreferences()` still works for them
 - **Consent audit log** — timestamped, versioned records stored locally (SQLite or CSV)
-- **No hidden choice** — Accept All and Reject All sit side by side on the first layer with the same size, colour and weight, one click each. No pre-ticked boxes, no cookie wall
+- **No hidden choice** — Accept All and Reject All sit side by side on the first layer with the same style (height, font, colour, weight), one click each. No pre-ticked boxes, no cookie wall
 - **< 10 KB gzipped** — a single minified JS file with zero dependencies
 - **Works everywhere** — Vercel, Railway, shared cPanel hosting, any PHP server, bare VPS
 
@@ -87,7 +87,8 @@ yourwebsite.com/
 └── consentkit/
     ├── widget.js
     ├── consentkit.config.json
-    └── consent-log.php        ← optional, for audit logging
+    ├── consent-log.php        ← optional, for audit logging
+    └── .htaccess              ← with the log: keeps the CSV private (Apache)
 ```
 
 ### 4 — Add the script tag
@@ -234,7 +235,7 @@ ConsentKit fires all seven GCM v2 parameters (`security_storage` as `"granted"`,
 
 `defaultAdPersonalization` is optional: configs written before v1.2 do not have it and get `"denied"`.
 
-**`consent_update` event for Google Tag Manager:** after a visitor decides (Accept All, Reject All, Save Preferences, also from the re-opened preferences), ConsentKit pushes `{ event: 'consent_update' }` to `dataLayer`, right after `gtag('consent', 'update', …)`. Tags that wait for consent only re-check on their next trigger, so use a Custom Event trigger named `consent_update` to fire them straight after the click instead of on the next page view. The event has no payload. It is not sent when consent is applied automatically (Global Privacy Control, Do Not Track, stored consent on page load).
+**`consent_update` event for Google Tag Manager:** after a visitor decides (Accept All, Reject All, Save Preferences, also from the re-opened preferences), ConsentKit pushes `{ event: 'consent_update' }` to `dataLayer`, right after `gtag('consent', 'update', …)`. Tags that wait for consent only re-check on their next trigger, so use a Custom Event trigger named `consent_update` to fire them straight after the click instead of on the next page view. The event has no payload and is also sent when `googleConsentMode.enabled` is `false`. It is not sent when consent is applied automatically (Global Privacy Control, Do Not Track, stored consent on page load).
 
 ---
 
@@ -247,14 +248,14 @@ ConsentKit fires all seven GCM v2 parameters (`security_storage` as `"granted"`,
 | `strings` | object | Optional overrides for the built-in texts, see [Languages](#languages) |
 | `banner.position` | string | `bottom-bar` · `bottom-left` · `bottom-right` · `center-popup` |
 | `banner.primaryColor` | string | Banner background colour |
-| `banner.accentColor` | string | Button / toggle colour |
+| `banner.accentColor` | string | Colour of the toggle switches and the re-open button. Buttons use `textColor` and `primaryColor` |
 | `banner.privacyPolicyUrl` | string | Link shown in banner description |
 | `banner.showReopenButton` | boolean | Floating re-open button after consent, default `true`. Set `false` only together with your own link, see [Open preferences from your own link](#open-preferences-from-your-own-link) |
 | `categories[].key` | string | Used in `data-ck-category` attributes |
 | `categories[].locked` | boolean | `true` = always on (use for necessary) |
 | `categories[].defaultEnabled` | boolean | Pre-selected state (`false` for GDPR opt-in) |
 | `consentLogging.enabled` | boolean | POST consent records to the logging endpoint |
-| `consentLogging.retentionDays` | number | Auto-delete old records (default: `1825` = 5 years) |
+| `consentLogging.retentionDays` | number | Auto-delete old records on the Node server (default: `1825` = 5 years). The PHP script has its own 5-year default |
 | `googleConsentMode.enabled` | boolean | Fire GCM v2 signals |
 | `googleConsentMode.defaultAdPersonalization` | string | Optional, default `denied` |
 | `ccpa.enabled` | boolean | Show "Do Not Sell" link in banner footer |
@@ -343,7 +344,7 @@ These rules are in the widget code and cannot be changed by any config option:
 2. GPC always triggers silent reject-all
 3. Consent is never assumed from page interaction
 
-One more rule is a default you may switch off, with a condition: the re-open preferences button is rendered once consent exists, unless you set `banner.showReopenButton` to `false` and provide your own link to `ConsentKit.openPreferences()`.
+One more rule is a default you may switch off, with a condition: the re-open preferences button is rendered once a visitor has made a choice (visitors whose browser sends GPC or DNT get no banner and no button), unless you set `banner.showReopenButton` to `false` and provide your own link to `ConsentKit.openPreferences()`.
 
 The shipped config also starts with every non-necessary category off (`defaultEnabled: false`) and all Google Consent Mode defaults `denied` (except `security_storage`). Those are config values: keep them for an opt-in setup.
 
@@ -444,7 +445,7 @@ Pull requests are welcome. For significant changes please open an issue first.
 pnpm install
 pnpm dev        # widget watch + Next.js dev server
 pnpm build      # production build
-pnpm zip        # package ftp/ into dist/consentkit-ftp.zip
+pnpm zip        # package ftp/ into dist/consentkit-ftp-v<version>.zip
 ```
 
 ---

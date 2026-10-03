@@ -33,7 +33,7 @@ The fields you'll want to change:
 ```
 
 - `primaryColor` — banner background (dark colour recommended)
-- `accentColor` — button colour (your brand colour)
+- `accentColor` — colour of the toggle switches and the re-open button (the buttons use `textColor` and `primaryColor`)
 - `privacyPolicyUrl` — path to your privacy policy page
 
 Everything else can stay as-is to start.
@@ -49,7 +49,8 @@ yourwebsite.com/
 └── consentkit/
     ├── widget.js
     ├── consentkit.config.json
-    └── consent-log.php          ← optional, for logging
+    ├── consent-log.php          ← optional, for logging
+    └── .htaccess                ← with the log: keeps the CSV private (Apache)
 ```
 
 Using cPanel File Manager, FileZilla, or any FTP client — just drag and drop.
@@ -146,7 +147,7 @@ Open `consentkit.config.json` and change these fields:
 | Field | What it controls |
 |---|---|
 | `primaryColor` | Banner background colour |
-| `accentColor` | Accept button and toggle colour |
+| `accentColor` | Toggle switches and re-open button colour |
 | `textColor` | Text colour on the banner |
 | `borderRadius` | Rounded corners (`"0px"` for sharp, `"16px"` for very round) |
 

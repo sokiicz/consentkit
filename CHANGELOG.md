@@ -4,7 +4,7 @@
 
 ### What visitors see (read this before you upgrade)
 
-- **Button look changed.** Accept All and Reject All now look exactly the same: both filled with the banner's text colour and labelled with its background colour (white with dark text in the default config), one CSS rule for both. Customize stays outlined. Before, Reject All was faded. The accent colour is now used for toggles only.
+- **Button look changed.** Accept All and Reject All now look exactly the same: both filled with the banner's text colour and labelled with its background colour (white with dark text in the default config), one CSS rule for both. Customize stays outlined. Before, Reject All was faded. The accent colour is now used for the toggle switches and the re-open button only.
 - **The re-open button is shown after Accept All too.** It used to disappear when everything was accepted. The panel it opens shows the visitor's current choices (it used to show all categories off), and closing it with "x" changes nothing.
 - **Keyboard focus starts on the dialog, not on Accept All**, so pressing Enter right after the banner appears no longer means consent.
 - Links in the banner use the banner's text colour, which is readable on any config.
