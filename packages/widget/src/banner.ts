@@ -630,6 +630,8 @@ export class ConsentBanner {
   }
 
   private mountReopener(): void {
+    // The site may offer its own "Cookie settings" link instead (ConsentKit.openPreferences()).
+    if (this.config.banner.showReopenButton === false) return;
     const reopenerHost = document.createElement('div');
     reopenerHost.id = 'consentkit-reopener';
     document.body.appendChild(reopenerHost);
@@ -785,7 +787,7 @@ export class ConsentBanner {
   }
 
   /** Call this when consent already exists on load — skips the banner, shows only the re-open icon.
-   *  The icon is always rendered once consent exists, whatever was chosen, so consent can be withdrawn. */
+   *  The icon is shown once consent exists, whatever was chosen, unless banner.showReopenButton is false. */
   mountReopenerOnly(): void {
     this.mountReopener();
   }

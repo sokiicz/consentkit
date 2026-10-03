@@ -22,6 +22,9 @@ export interface BannerConfig {
   textColor: string;
   borderRadius: string;
   logoUrl: string;
+  /** Floating re-open button after consent. Default true. Set false only if the site has its own
+   *  "Cookie settings" link calling ConsentKit.openPreferences(), so withdrawing stays possible. */
+  showReopenButton?: boolean;
 }
 
 export interface CategoryConfig {

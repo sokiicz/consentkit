@@ -49,7 +49,7 @@ It is a single embeddable JavaScript file + a JSON config. That's it.
 - **Global Privacy Control** — auto-rejects without showing a banner when GPC is set
 - **Do Not Track** — honoured as reject-all
 - **CCPA "Do Not Sell" link** — built into the banner footer
-- **Preferences re-open button** — always shown once consent exists (also after Accept All), so consent can be withdrawn at any time; a visitor can drag it off screen for the rest of the browser session
+- **Always a way to withdraw consent** — a re-open button is shown once consent exists (also after Accept All) and a visitor can drag it off screen for the rest of the browser session; or switch it off and link `ConsentKit.openPreferences()` from your footer or settings page
 - **Consent audit log** — timestamped, versioned records stored locally (SQLite or CSV)
 - **Zero dark patterns** — Accept All and Reject All are always identical in size, colour, and weight
 - **< 10 KB gzipped** — a single minified JS file with zero dependencies
@@ -251,6 +251,7 @@ ConsentKit fires all seven GCM v2 parameters (`security_storage` as `"granted"`,
 | `banner.primaryColor` | string | Banner background colour |
 | `banner.accentColor` | string | Button / toggle colour |
 | `banner.privacyPolicyUrl` | string | Link shown in banner description |
+| `banner.showReopenButton` | boolean | Floating re-open button after consent, default `true`. Set `false` only together with your own link, see [Open preferences from your own link](#open-preferences-from-your-own-link) |
 | `categories[].key` | string | Used in `data-ck-category` attributes |
 | `categories[].locked` | boolean | `true` = always on (use for necessary) |
 | `categories[].defaultEnabled` | boolean | Pre-selected state (`false` for GDPR opt-in) |
@@ -293,7 +294,7 @@ A ready-made Czech config is in [`ftp/consentkit.config.cs.example.json`](ftp/co
 
 ## Open preferences from your own link
 
-If you hide the floating re-open button (for example because it collides with your mobile navigation), keep a link elsewhere on the page. Withdrawing consent has to stay as easy as giving it.
+The floating re-open button can collide with your layout (a mobile navigation bar, a chat button). Turn it off with `"banner": { "showReopenButton": false }` and put a link where visitors look for such things: next to your privacy policy and terms links in the footer, and on your settings page. Withdrawing consent has to stay as easy as giving it, so do not switch the button off without adding the link.
 
 ```html
 <a href="#" onclick="ConsentKit.openPreferences(); return false;">Cookie settings</a>
@@ -312,7 +313,7 @@ The panel opens with the visitor's current choices, and saving works exactly lik
 - Accept All and Reject All have **identical visual weight** (hardcoded, not configurable)
 - Consent never inferred from scrolling, time-on-page, or continued browsing
 - Timestamped, versioned consent records stored for audit trail
-- Preferences re-open button always shown after consent, also after Accept All — consent withdrawable at any time (a visitor can drag it off screen for the rest of the browser session, it is back on the next visit)
+- A way to withdraw consent is always available: the re-open button (also after Accept All; a visitor can drag it off screen for the rest of the browser session, it is back on the next visit), or your own link to `ConsentKit.openPreferences()` when you set `banner.showReopenButton` to `false`
 
 ### CCPA / CPRA (California)
 
@@ -343,7 +344,7 @@ These rules cannot be overridden by any config option:
 3. GCM v2 always defaults to `"denied"` before user interaction
 4. GPC always triggers silent reject-all
 5. Consent is never assumed from page interaction
-6. The re-open preferences button is always rendered once consent exists (a visitor can drag it away for the rest of the browser session)
+6. The re-open preferences button is rendered once consent exists, unless you set `banner.showReopenButton` to `false` and provide a link to `ConsentKit.openPreferences()` yourself
 
 ---
 
