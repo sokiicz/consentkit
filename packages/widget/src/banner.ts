@@ -2,7 +2,8 @@
  * banner.ts — Shadow DOM banner rendering with full accessibility and GDPR dark-pattern prevention.
  */
 
-import type { ConsentKitConfig, ConsentChoices, CategoryConfig } from './types';
+import type { ConsentKitConfig, ConsentChoices, CategoryConfig, UiStrings } from './types';
+import { getStrings, fill } from './i18n';
 
 type ConsentCallback = (choices: ConsentChoices) => void;
 
@@ -270,12 +271,14 @@ export class ConsentBanner {
   private prefsPanel!: HTMLElement;
   private toggles: Map<string, HTMLInputElement> = new Map();
   private config: ConsentKitConfig;
+  private t: UiStrings;
   private onConsent: ConsentCallback;
   private overlay!: HTMLElement;
   private skipReopener = false;
 
   constructor(config: ConsentKitConfig, onConsent: ConsentCallback) {
     this.config = config;
+    this.t = getStrings(config);
     this.onConsent = onConsent;
   }
 
@@ -356,7 +359,7 @@ export class ConsentBanner {
     if (cfg.logoUrl) {
       const logo = document.createElement('img');
       logo.src = cfg.logoUrl;
-      logo.alt = 'Logo';
+      logo.alt = this.t.logoAlt;
       logo.className = 'ck-logo';
       header.appendChild(logo);
     }
@@ -378,7 +381,7 @@ export class ConsentBanner {
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.className = 'ck-link';
-      link.textContent = 'Learn more';
+      link.textContent = this.t.learnMore;
       desc.appendChild(link);
     }
     this.layer1.appendChild(desc);
@@ -422,7 +425,7 @@ export class ConsentBanner {
     this.prefsPanel.className = 'ck-prefs';
     this.prefsPanel.id = 'ck-prefs-panel';
     this.prefsPanel.setAttribute('role', 'group');
-    this.prefsPanel.setAttribute('aria-label', 'Cookie Preferences');
+    this.prefsPanel.setAttribute('aria-label', this.t.preferencesTitle);
     this.prefsPanel.hidden = true;
 
     // Header
@@ -431,12 +434,12 @@ export class ConsentBanner {
 
     const title = document.createElement('p');
     title.className = 'ck-prefs-title';
-    title.textContent = 'Cookie Preferences';
+    title.textContent = this.t.preferencesTitle;
     header.appendChild(title);
 
     const backBtn = document.createElement('button');
     backBtn.className = 'ck-back-btn';
-    backBtn.setAttribute('aria-label', 'Back to cookie banner');
+    backBtn.setAttribute('aria-label', this.t.backToBanner);
     backBtn.textContent = '×';
     backBtn.addEventListener('click', () => this.showLayer1());
     header.appendChild(backBtn);
@@ -480,7 +483,7 @@ export class ConsentBanner {
     const label = document.createElement('p');
     label.className = 'ck-cat-label';
     label.id = `ck-cat-label-${cat.key}`;
-    label.textContent = cat.label + (cat.locked ? ' (Always On)' : '');
+    label.textContent = cat.label + (cat.locked ? ` (${this.t.alwaysOn})` : '');
     info.appendChild(label);
 
     const desc = document.createElement('p');
@@ -492,7 +495,7 @@ export class ConsentBanner {
 
     const toggleLabel = document.createElement('label');
     toggleLabel.className = 'ck-toggle';
-    toggleLabel.setAttribute('aria-label', `${cat.label} cookies`);
+    toggleLabel.setAttribute('aria-label', fill(this.t.categoryToggle, { label: cat.label }));
 
     const input = document.createElement('input');
     input.type = 'checkbox';
@@ -544,7 +547,7 @@ export class ConsentBanner {
     this.layer1.style.display = 'none';
     this.prefsPanel.hidden = false;
     this.prefsPanel.classList.add('open');
-    this.banner.setAttribute('aria-label', 'Cookie Preferences');
+    this.banner.setAttribute('aria-label', this.t.preferencesTitle);
     this.trapFocus(this.prefsPanel);
   }
 
@@ -680,8 +683,8 @@ export class ConsentBanner {
 
     const btn = document.createElement('button');
     btn.className = 'ck-reopener';
-    btn.setAttribute('aria-label', 'Manage cookie preferences');
-    btn.setAttribute('title', 'Manage cookie preferences');
+    btn.setAttribute('aria-label', this.t.reopenerLabel);
+    btn.setAttribute('title', this.t.reopenerLabel);
     btn.innerHTML = `
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="3"/>

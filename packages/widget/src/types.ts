@@ -54,9 +54,23 @@ export interface CCPAConfig {
   doNotSellLinkText: string;
 }
 
+/** Texts the widget adds itself. `{label}` in categoryToggle is replaced by the category label. */
+export interface UiStrings {
+  logoAlt: string;
+  learnMore: string;
+  preferencesTitle: string;
+  backToBanner: string;
+  alwaysOn: string;
+  categoryToggle: string;
+  reopenerLabel: string;
+}
+
 export interface ConsentKitConfig {
   version: string;
+  /** Picks the built-in texts: "en" or "cs". Anything else falls back to English. */
   lang: string;
+  /** Optional per-text overrides on top of the built-in table for `lang`. */
+  strings?: Partial<UiStrings>;
   geo: GeoConfig;
   banner: BannerConfig;
   categories: CategoryConfig[];
