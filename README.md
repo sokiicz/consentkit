@@ -44,7 +44,8 @@ It is a single embeddable JavaScript file + a JSON config. That's it.
 
 - **Shadow DOM banner** — fully isolated styles, never conflicts with your site's CSS
 - **Script pre-blocking** — non-essential scripts are blocked *before* they execute, not after
-- **Google Consent Mode v2** — fires all six required parameters with correct defaults
+- **Google Consent Mode v2** — fires all seven parameters (including `ad_personalization`) with correct defaults, plus a `consent_update` event for GTM
+- **English and Czech built in** — `"lang": "cs"` switches every text the widget adds itself, any text can be overridden in the config
 - **Global Privacy Control** — auto-rejects without showing a banner when GPC is set
 - **Do Not Track** — honoured as reject-all
 - **CCPA "Do Not Sell" link** — built into the banner footer
@@ -66,7 +67,7 @@ Download **`consentkit-ftp-vX.X.X.zip`** from the [Releases page](https://github
 
 ### 2 — Edit the config
 
-Open `consentkit.config.json` in any text editor. Change these fields:
+Open `consentkit.config.json` in any text editor. (For a Czech banner start from `consentkit.config.cs.example.json` instead: copy it over `consentkit.config.json`.) Change these fields:
 
 ```json
 {
@@ -189,7 +190,7 @@ Add `data-ck-category` + `data-ck-src` to any script you want blocked until cons
 
 ## Google Consent Mode v2 Setup
 
-ConsentKit fires all six GCM v2 parameters as `"denied"` before any user interaction — which is the requirement from Google for EEA visitors.
+ConsentKit fires all seven GCM v2 parameters (`security_storage` as `"granted"`, the rest as `"denied"`) before any user interaction — which is the requirement from Google for EEA visitors.
 
 **Load ConsentKit before your Google tag:**
 
@@ -233,6 +234,10 @@ ConsentKit fires all six GCM v2 parameters as `"denied"` before any user interac
 | `functional` | `functionality_storage`, `personalization_storage` |
 | `necessary` | `security_storage` (always `granted`) |
 
+`defaultAdPersonalization` is optional: configs written before v1.2 do not have it and get `"denied"`.
+
+**`consent_update` event for Google Tag Manager:** after a visitor decides (Accept All, Reject All, Save Preferences, also from the re-opened preferences), ConsentKit pushes `{ event: 'consent_update' }` to `dataLayer`, right after `gtag('consent', 'update', …)`. Tags that wait for consent only re-check on their next trigger, so use a Custom Event trigger named `consent_update` to fire them straight after the click instead of on the next page view. The event has no payload. It is not sent when consent is applied automatically (Global Privacy Control, Do Not Track, stored consent on page load).
+
 ---
 
 ## Config Reference
@@ -240,6 +245,8 @@ ConsentKit fires all six GCM v2 parameters as `"denied"` before any user interac
 | Field | Type | Description |
 |---|---|---|
 | `version` | string | Bump this to re-ask consent from returning visitors |
+| `lang` | string | `en` (default) or `cs`. Picks the built-in texts, see [Languages](#languages) |
+| `strings` | object | Optional overrides for the built-in texts, see [Languages](#languages) |
 | `banner.position` | string | `bottom-bar` · `bottom-left` · `bottom-right` · `center-popup` |
 | `banner.primaryColor` | string | Banner background colour |
 | `banner.accentColor` | string | Button / toggle colour |
@@ -250,9 +257,37 @@ ConsentKit fires all six GCM v2 parameters as `"denied"` before any user interac
 | `consentLogging.enabled` | boolean | POST consent records to the logging endpoint |
 | `consentLogging.retentionDays` | number | Auto-delete old records (default: `1825` = 5 years) |
 | `googleConsentMode.enabled` | boolean | Fire GCM v2 signals |
+| `googleConsentMode.defaultAdPersonalization` | string | Optional, default `denied` |
 | `ccpa.enabled` | boolean | Show "Do Not Sell" link in banner footer |
 
 Full example: [`consentkit.config.example.json`](consentkit.config.example.json)
+
+---
+
+## Languages
+
+Banner title, description, button labels and category texts come from your config, so write them in your language. The widget adds a few texts of its own (the "Learn more" link, labels for screen readers, the title of the preferences panel, the tooltip of the re-open button). Those come from a built-in table chosen by `lang`; unknown languages fall back to English.
+
+| Key | `en` | `cs` |
+|---|---|---|
+| `logoAlt` | Logo | Logo |
+| `learnMore` | Learn more | Zjistit více |
+| `preferencesTitle` | Cookie Preferences | Nastavení cookies |
+| `backToBanner` | Back to cookie banner | Zpět na lištu |
+| `alwaysOn` | Always On | Vždy zapnuto |
+| `categoryToggle` | {label} cookies | Cookies: {label} |
+| `reopenerLabel` | Manage cookie preferences | Spravovat nastavení cookies |
+
+Override any of them, or write your own language, with `strings`:
+
+```json
+{
+  "lang": "cs",
+  "strings": { "learnMore": "Zásady ochrany údajů" }
+}
+```
+
+A ready-made Czech config is in [`ftp/consentkit.config.cs.example.json`](ftp/consentkit.config.cs.example.json).
 
 ---
 
@@ -372,6 +407,7 @@ consentkit/
 ├── packages/widget/src/          # Widget source (Vanilla TypeScript)
 │   ├── index.ts                  #   Entry point
 │   ├── banner.ts                 #   Shadow DOM UI
+│   ├── i18n.ts                   #   Built-in texts (en, cs)
 │   ├── blocker.ts                #   Script pre-blocking
 │   ├── gcm.ts                    #   Google Consent Mode v2
 │   └── consent.ts                #   Storage + logging

@@ -5,6 +5,8 @@ dist/
 data/
 *.db
 consentkit.config.json
+# …except the FTP template, which ships in the release ZIP
+!ftp/consentkit.config.json
 .env
 .env.local
 .vercel

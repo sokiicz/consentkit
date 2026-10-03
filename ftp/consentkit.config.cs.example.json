@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "lang": "cs",
+  "geo": {
+    "showInGDPRCountries": true,
+    "showInCCPAStates": true,
+    "showGlobally": false
+  },
+  "banner": {
+    "position": "bottom-bar",
+    "title": "Používáme cookies",
+    "description": "Používáme cookies, abychom vylepšili váš zážitek z webu a analyzovali jeho návštěvnost. Můžete přijmout všechny cookies, odmítnout nepovinné nebo si nastavit vlastní předvolby. Souhlas můžete kdykoli změnit.",
+    "acceptAllLabel": "Přijmout vše",
+    "rejectAllLabel": "Odmítnout vše",
+    "customizeLabel": "Nastavit",
+    "savePreferencesLabel": "Uložit nastavení",
+    "privacyPolicyUrl": "/zasady-ochrany-udaju",
+    "primaryColor": "#1a1a1a",
+    "accentColor": "#4f46e5",
+    "textColor": "#ffffff",
+    "borderRadius": "12px",
+    "logoUrl": ""
+  },
+  "categories": [
+    {
+      "key": "necessary",
+      "label": "Nezbytné",
+      "description": "Cookies nutné pro fungování webu. Nelze je vypnout.",
+      "locked": true,
+      "defaultEnabled": true
+    },
+    {
+      "key": "analytics",
+      "label": "Analytické",
+      "description": "Pomáhají nám pochopit, jak návštěvníci web používají, a to pomocí anonymních statistik.",
+      "locked": false,
+      "defaultEnabled": false
+    },
+    {
+      "key": "marketing",
+      "label": "Marketingové",
+      "description": "Slouží k zobrazování relevantních reklam a k měření jejich účinnosti.",
+      "locked": false,
+      "defaultEnabled": false
+    },
+    {
+      "key": "functional",
+      "label": "Funkční",
+      "description": "Zapínají rozšířené funkce, například živý chat, vložená videa a personalizaci.",
+      "locked": false,
+      "defaultEnabled": false
+    }
+  ],
+  "consentLogging": {
+    "enabled": true,
+    "retentionDays": 1825
+  },
+  "googleConsentMode": {
+    "enabled": false,
+    "defaultAdStorage": "denied",
+    "defaultAnalyticsStorage": "denied",
+    "defaultFunctionalityStorage": "denied",
+    "defaultPersonalizationStorage": "denied",
+    "defaultAdUserData": "denied",
+    "defaultAdPersonalization": "denied",
+    "defaultSecurityStorage": "granted"
+  },
+  "ccpa": {
+    "enabled": false,
+    "doNotSellLinkText": "Neprodávat ani nesdílet mé osobní údaje"
+  }
+}

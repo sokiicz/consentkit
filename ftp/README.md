@@ -11,6 +11,7 @@ No Node.js. No server. No account required.
 |---|---|
 | `widget.js` | The consent banner — don't edit this |
 | `consentkit.config.json` | **Your config — edit this** |
+| `consentkit.config.cs.example.json` | Same config with Czech texts, copy it over `consentkit.config.json` for a Czech banner |
 | `consent-log.php` | Optional: logs consent records to a CSV file |
 | `embed-example.html` | Copy-paste examples for your pages |
 

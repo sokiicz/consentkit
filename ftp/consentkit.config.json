@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "lang": "en",
+  "geo": {
+    "showInGDPRCountries": true,
+    "showInCCPAStates": true,
+    "showGlobally": false
+  },
+  "banner": {
+    "position": "bottom-bar",
+    "title": "We use cookies",
+    "description": "We use cookies to improve your experience and analyse site traffic. You can accept all cookies, reject non-essential ones, or customise your preferences.",
+    "acceptAllLabel": "Accept All",
+    "rejectAllLabel": "Reject All",
+    "customizeLabel": "Customize",
+    "savePreferencesLabel": "Save Preferences",
+    "privacyPolicyUrl": "/privacy-policy",
+    "primaryColor": "#1a1a1a",
+    "accentColor": "#4f46e5",
+    "textColor": "#ffffff",
+    "borderRadius": "12px",
+    "logoUrl": ""
+  },
+  "categories": [
+    {
+      "key": "necessary",
+      "label": "Necessary",
+      "description": "Essential cookies required for the website to function. These cannot be disabled.",
+      "locked": true,
+      "defaultEnabled": true
+    },
+    {
+      "key": "analytics",
+      "label": "Analytics",
+      "description": "Help us understand how visitors interact with our website by collecting anonymous usage data.",
+      "locked": false,
+      "defaultEnabled": false
+    },
+    {
+      "key": "marketing",
+      "label": "Marketing",
+      "description": "Used to show relevant advertisements and measure the effectiveness of ad campaigns.",
+      "locked": false,
+      "defaultEnabled": false
+    },
+    {
+      "key": "functional",
+      "label": "Functional",
+      "description": "Enable enhanced features like live chat, video embeds, and personalisation.",
+      "locked": false,
+      "defaultEnabled": false
+    }
+  ],
+  "consentLogging": {
+    "enabled": true,
+    "retentionDays": 1825
+  },
+  "googleConsentMode": {
+    "enabled": false,
+    "defaultAdStorage": "denied",
+    "defaultAnalyticsStorage": "denied",
+    "defaultFunctionalityStorage": "denied",
+    "defaultPersonalizationStorage": "denied",
+    "defaultAdUserData": "denied",
+    "defaultAdPersonalization": "denied",
+    "defaultSecurityStorage": "granted"
+  },
+  "ccpa": {
+    "enabled": false,
+    "doNotSellLinkText": "Do Not Sell or Share My Personal Information"
+  }
+}

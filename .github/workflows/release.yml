@@ -25,10 +25,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --filter @consentkit/widget --no-frozen-lockfile
 
       - name: Build widget
         run: pnpm --filter @consentkit/widget build
@@ -43,6 +42,7 @@ jobs:
           zip -r "../dist/consentkit-ftp-${VERSION}.zip" \
             widget.js \
             consentkit.config.json \
+            consentkit.config.cs.example.json \
             consent-log.php \
             embed-example.html \
             README.md
