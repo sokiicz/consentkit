@@ -432,7 +432,12 @@ export class ConsentBanner {
     backBtn.className = 'ck-back-btn';
     backBtn.setAttribute('aria-label', this.t.backToBanner);
     backBtn.textContent = '×';
-    backBtn.addEventListener('click', () => this.showLayer1());
+    backBtn.addEventListener('click', () => {
+      // Panel opened from the re-open button or a site link: closing it must leave the
+      // stored consent untouched. Only a first visit goes back to the Accept/Reject layer.
+      if (hasConsent(this.config)) this.dismiss();
+      else this.showLayer1();
+    });
     header.appendChild(backBtn);
     this.prefsPanel.appendChild(header);
 
