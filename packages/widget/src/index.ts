@@ -64,6 +64,9 @@ function shouldHonorDNT(): boolean {
   return navigator.doNotTrack === '1';
 }
 
+// The one banner instance; ConsentKit.openPreferences() uses it. Set once the config is loaded.
+let activeBanner: ConsentBanner | null = null;
+
 async function init(): Promise<void> {
   const serverOrigin = getServerOrigin();
   const logUrl = getLogUrl(serverOrigin);
@@ -78,6 +81,9 @@ async function init(): Promise<void> {
 
   // ─── Step 2: GCM v2 defaults (must fire before any user interaction) ───────
   initGCMDefaults(config);
+
+  const banner = new ConsentBanner(config, (choices) => handleVisitorChoice(config, logUrl, choices));
+  activeBanner = banner;
 
   // ─── Step 3: Global Privacy Control — auto-reject, no banner ────────────────
   if (shouldHonorGPC()) {
@@ -105,14 +111,12 @@ async function init(): Promise<void> {
     if (existing) {
       applyConsent(existing.choices);
       updateGCMConsent(config, existing.choices);
-      mountReopener(config, logUrl, existing.choices);
+      banner.mountReopenerOnly();
     }
     return;
   }
 
   // ─── No consent yet — show banner ────────────────────────────────────────────
-  const banner = new ConsentBanner(config, (choices) => handleVisitorChoice(config, logUrl, choices));
-
   banner.mount();
 }
 
@@ -130,11 +134,6 @@ async function handleVisitorChoice(
   await logConsentToServer(logUrl, config, choices);
 }
 
-function mountReopener(config: ConsentKitConfig, logUrl: string, existingChoices?: ConsentChoices): void {
-  const banner = new ConsentBanner(config, (choices) => handleVisitorChoice(config, logUrl, choices));
-  banner.mountReopenerOnly(existingChoices);
-}
-
 // ─── Kick off after DOM is ready ─────────────────────────────────────────────
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => { init(); });
@@ -144,3 +143,10 @@ if (document.readyState === 'loading') {
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 export { getConsent, setConsent, hasConsent } from './consent';
+
+/** Opens the preferences panel from anywhere, e.g. a "Cookie settings" link in the footer:
+ *  <a href="#" onclick="ConsentKit.openPreferences(); return false;">Cookie settings</a>
+ *  Does nothing until the widget has loaded its config. */
+export function openPreferences(): void {
+  activeBanner?.openPreferences();
+}

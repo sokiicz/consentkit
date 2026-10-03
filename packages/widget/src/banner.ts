@@ -4,6 +4,7 @@
 
 import type { ConsentKitConfig, ConsentChoices, CategoryConfig, UiStrings } from './types';
 import { getStrings, fill } from './i18n';
+import { hasConsent, getConsent } from './consent';
 
 type ConsentCallback = (choices: ConsentChoices) => void;
 
@@ -104,28 +105,19 @@ const STYLES = (cfg: ConsentKitConfig): string => `
   .ck-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
   .ck-btn:hover { filter: brightness(1.12); }
 
-  /* Accept All — prominent CTA */
-  .ck-btn-accept {
+  /* Accept All and Reject All must have identical visual weight (GDPR dark-pattern
+     prevention). One rule for both so they cannot drift apart. */
+  .ck-btn-accept, .ck-btn-reject {
     background: ${cfg.banner.accentColor};
     color: #fff;
     border-color: ${cfg.banner.accentColor};
   }
-  /* Decline All — plain, no border highlight */
-  .ck-btn-reject {
-    background: transparent;
-    color: ${cfg.banner.textColor};
-    border-color: transparent;
-    opacity: 0.6;
-  }
-  .ck-btn-reject:hover { opacity: 0.9; filter: none; }
+  /* Customize is not a consent choice, but it stays fully visible and outlined. */
   .ck-btn-customize {
     background: transparent;
     color: ${cfg.banner.textColor};
-    border-color: transparent;
-    opacity: 0.4;
-    font-size: 13px;
+    border-color: rgba(255,255,255,0.35);
   }
-  .ck-btn-customize:hover { opacity: 0.7; filter: none; }
 
   /* === Preferences panel === */
   .ck-prefs {
@@ -274,7 +266,6 @@ export class ConsentBanner {
   private t: UiStrings;
   private onConsent: ConsentCallback;
   private overlay!: HTMLElement;
-  private skipReopener = false;
 
   constructor(config: ConsentKitConfig, onConsent: ConsentCallback) {
     this.config = config;
@@ -409,7 +400,7 @@ export class ConsentBanner {
     customizeBtn.setAttribute('aria-expanded', 'false');
     customizeBtn.setAttribute('aria-controls', 'ck-prefs-panel');
 
-    // Order: Accept | Decline | Customize — Accept is prominent CTA
+    // Order: Accept | Reject | Customize — Accept and Reject carry equal weight
     actions.appendChild(acceptBtn);
     actions.appendChild(rejectBtn);
     actions.appendChild(customizeBtn);
@@ -499,7 +490,9 @@ export class ConsentBanner {
 
     const input = document.createElement('input');
     input.type = 'checkbox';
-    input.checked = cat.locked ? true : cat.defaultEnabled;
+    // Re-opened preferences show what the visitor chose before; a stale record (older config version) does not count.
+    const stored = hasConsent(this.config) ? getConsent()?.choices : undefined;
+    input.checked = cat.locked ? true : (stored?.[cat.key] ?? cat.defaultEnabled);
     input.disabled = cat.locked;
     input.setAttribute('aria-labelledby', `ck-cat-label-${cat.key}`);
     input.setAttribute('aria-checked', String(input.checked));
@@ -602,15 +595,8 @@ export class ConsentBanner {
     return choices;
   }
 
-  private allChoicesAccepted(choices: ConsentChoices): boolean {
-    return this.config.categories
-      .filter((c) => !c.locked)
-      .every((c) => choices[c.key] === true);
-  }
-
   private handleAcceptAll(): void {
     this.toggles.forEach((input) => { input.checked = true; });
-    this.skipReopener = true;
     this.onConsent(this.getChoices());
     this.dismiss();
   }
@@ -626,9 +612,7 @@ export class ConsentBanner {
   }
 
   private handleSavePrefs(): void {
-    const choices = this.getChoices();
-    if (this.allChoicesAccepted(choices)) this.skipReopener = true;
-    this.onConsent(choices);
+    this.onConsent(this.getChoices());
     this.dismiss();
   }
 
@@ -641,7 +625,7 @@ export class ConsentBanner {
     }
     setTimeout(() => {
       this.host.remove();
-      if (!this.skipReopener) this.mountReopener();
+      this.mountReopener();
     }, 350);
   }
 
@@ -801,10 +785,19 @@ export class ConsentBanner {
   }
 
   /** Call this when consent already exists on load — skips the banner, shows only the re-open icon.
-   *  Pass the stored choices so we can skip the icon entirely when all cookies are accepted. */
-  mountReopenerOnly(choices?: ConsentChoices): void {
-    if (choices && this.allChoicesAccepted(choices)) return;
+   *  The icon is always rendered once consent exists, whatever was chosen, so consent can be withdrawn. */
+  mountReopenerOnly(): void {
     this.mountReopener();
+  }
+
+  /** Opens the preferences panel on demand (site link, see ConsentKit.openPreferences in index.ts). */
+  openPreferences(): void {
+    document.getElementById('consentkit-reopener')?.remove();
+    if (this.host?.isConnected) {
+      this.showPrefs();
+    } else {
+      this.remount();
+    }
   }
 
   private remount(): void {
