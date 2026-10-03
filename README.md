@@ -49,7 +49,7 @@ It is a single embeddable JavaScript file + a JSON config. That's it.
 - **Global Privacy Control** — auto-rejects without showing a banner when GPC is set
 - **Do Not Track** — honoured as reject-all
 - **CCPA "Do Not Sell" link** — built into the banner footer
-- **Preferences re-open button** — always visible, consent can be withdrawn at any time
+- **Preferences re-open button** — always shown once consent exists (also after Accept All), so consent can be withdrawn at any time; a visitor can drag it off screen for the rest of the browser session
 - **Consent audit log** — timestamped, versioned records stored locally (SQLite or CSV)
 - **Zero dark patterns** — Accept All and Reject All are always identical in size, colour, and weight
 - **< 10 KB gzipped** — a single minified JS file with zero dependencies
@@ -291,6 +291,18 @@ A ready-made Czech config is in [`ftp/consentkit.config.cs.example.json`](ftp/co
 
 ---
 
+## Open preferences from your own link
+
+If you hide the floating re-open button (for example because it collides with your mobile navigation), keep a link elsewhere on the page. Withdrawing consent has to stay as easy as giving it.
+
+```html
+<a href="#" onclick="ConsentKit.openPreferences(); return false;">Cookie settings</a>
+```
+
+The panel opens with the visitor's current choices, and saving works exactly like the re-open button (Google Consent Mode update, `consent_update` event, log entry). It also works for visitors whose browser sends Global Privacy Control, who otherwise never see a banner. The call does nothing until the widget has loaded its config, so use it from a click handler, not at page load.
+
+---
+
 ## Compliance Guide
 
 ### GDPR + ePrivacy (EU)
@@ -300,7 +312,7 @@ A ready-made Czech config is in [`ftp/consentkit.config.cs.example.json`](ftp/co
 - Accept All and Reject All have **identical visual weight** (hardcoded, not configurable)
 - Consent never inferred from scrolling, time-on-page, or continued browsing
 - Timestamped, versioned consent records stored for audit trail
-- Preferences re-open button always visible — consent withdrawable at any time
+- Preferences re-open button always shown after consent, also after Accept All — consent withdrawable at any time (a visitor can drag it off screen for the rest of the browser session, it is back on the next visit)
 
 ### CCPA / CPRA (California)
 
@@ -331,7 +343,7 @@ These rules cannot be overridden by any config option:
 3. GCM v2 always defaults to `"denied"` before user interaction
 4. GPC always triggers silent reject-all
 5. Consent is never assumed from page interaction
-6. The re-open preferences button is always rendered
+6. The re-open preferences button is always rendered once consent exists (a visitor can drag it away for the rest of the browser session)
 
 ---
 

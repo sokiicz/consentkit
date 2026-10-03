@@ -19,5 +19,9 @@ ftp/consent-log.csv
 packages/widget/dist/
 apps/server/public/widget.js
 
-# Workspace tracker metadata (local only)
+# Workspace tracker metadata and agent instructions (local only, never in the public repo)
 app-meta.json
+CLAUDE.md
+AGENTS.md
+STAV.md
+PROJEKT.md
