@@ -28,6 +28,9 @@ export function initGCMDefaults(config: ConsentKitConfig): void {
     functionality_storage: gcm.defaultFunctionalityStorage,
     personalization_storage: gcm.defaultPersonalizationStorage,
     ad_user_data: gcm.defaultAdUserData,
+    // Consent Mode v2 has four ad signals; without this one Google treats
+    // remarketing in the EEA as unconsented even after "Accept all".
+    ad_personalization: gcm.defaultAdPersonalization ?? 'denied',
     security_storage: gcm.defaultSecurityStorage,
     wait_for_update: 500,
   });
@@ -53,6 +56,7 @@ export function updateGCMConsent(
     functionality_storage: functionalGranted,
     personalization_storage: functionalGranted,
     ad_user_data: marketingGranted,
+    ad_personalization: marketingGranted,
     security_storage: 'granted', // always granted — necessary
   });
 }

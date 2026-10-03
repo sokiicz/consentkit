@@ -219,6 +219,7 @@ ConsentKit fires all six GCM v2 parameters as `"denied"` before any user interac
   "defaultFunctionalityStorage": "denied",
   "defaultPersonalizationStorage": "denied",
   "defaultAdUserData": "denied",
+  "defaultAdPersonalization": "denied",
   "defaultSecurityStorage": "granted"
 }
 ```
@@ -228,7 +229,7 @@ ConsentKit fires all six GCM v2 parameters as `"denied"` before any user interac
 | ConsentKit category | GCM v2 parameters |
 |---|---|
 | `analytics` | `analytics_storage` |
-| `marketing` | `ad_storage`, `ad_user_data` |
+| `marketing` | `ad_storage`, `ad_user_data`, `ad_personalization` |
 | `functional` | `functionality_storage`, `personalization_storage` |
 | `necessary` | `security_storage` (always `granted`) |
 

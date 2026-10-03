@@ -62,6 +62,7 @@
     "defaultFunctionalityStorage": "denied",
     "defaultPersonalizationStorage": "denied",
     "defaultAdUserData": "denied",
+    "defaultAdPersonalization": "denied",
     "defaultSecurityStorage": "granted"
   },
   "ccpa": {

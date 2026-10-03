@@ -44,6 +44,8 @@ export interface GoogleConsentModeConfig {
   defaultFunctionalityStorage: GCMValue;
   defaultPersonalizationStorage: GCMValue;
   defaultAdUserData: GCMValue;
+  /** Optional so older configs keep working; treated as 'denied' when absent. */
+  defaultAdPersonalization?: GCMValue;
   defaultSecurityStorage: GCMValue;
 }
 
