@@ -39,7 +39,7 @@
     async
   ></script>
   <script>
-    // Inline init — also wrapped so it only runs after consent
+    // Inline init: runs right away, but the Google script above only loads after consent
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());

@@ -76,14 +76,26 @@ export function initEarlyGCMDefaults(inlineConfig: ConsentKitConfig | undefined,
 }
 
 export function initGCMDefaults(config: ConsentKitConfig): void {
-  if (!config.googleConsentMode.enabled) return;
+  if (!config.googleConsentMode.enabled) {
+    if (defaultsSent) {
+      console.warn(
+        'ConsentKit: data-gcm="on" is set but googleConsentMode.enabled is false in the config. ' +
+          'The Google tag stays at "denied" and no consent update will be sent. ' +
+          'Enable Consent Mode in the config or remove data-gcm.'
+      );
+    }
+    return;
+  }
 
   const wanted = defaultsFromConfig(config);
 
   if (!defaultsSent) {
     // The Google tag may already have started. Say so, because its first events ran
     // without a consent default.
-    if (window.dataLayer && window.dataLayer.some((e) => !!e && (e as { event?: string }).event === 'gtm.js')) {
+    // gtm.js is the Tag Manager start event, a "js" command is what a plain gtag.js snippet pushes.
+    const started = (e: unknown): boolean =>
+      !!e && ((e as { event?: string }).event === 'gtm.js' || (e as ArrayLike<unknown>)[0] === 'js');
+    if (window.dataLayer && window.dataLayer.some(started)) {
       console.warn(
         'ConsentKit: the Google tag started before the consent default was sent. ' +
           'Add data-gcm="on" to the ConsentKit script tag and load it before the Google tag.'
