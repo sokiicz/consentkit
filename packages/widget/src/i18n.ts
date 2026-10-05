@@ -14,6 +14,8 @@ const EN: UiStrings = {
   alwaysOn: 'Always On',
   categoryToggle: '{label} cookies',
   reopenerLabel: 'Manage cookie preferences',
+  stateOn: 'On',
+  stateOff: 'Off',
 };
 
 const CS: UiStrings = {
@@ -24,6 +26,8 @@ const CS: UiStrings = {
   alwaysOn: 'Vždy zapnuto',
   categoryToggle: 'Cookies: {label}',
   reopenerLabel: 'Nastavení cookies',
+  stateOn: 'Zapnuto',
+  stateOff: 'Vypnuto',
 };
 
 const TABLES: Record<string, UiStrings> = { en: EN, cs: CS };

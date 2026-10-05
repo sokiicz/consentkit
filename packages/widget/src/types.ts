@@ -66,6 +66,8 @@ export interface UiStrings {
   alwaysOn: string;
   categoryToggle: string;
   reopenerLabel: string;
+  stateOn: string;
+  stateOff: string;
 }
 
 export interface ConsentKitConfig {

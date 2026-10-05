@@ -5,10 +5,11 @@
 import type { ConsentKitConfig, ConsentChoices, CategoryConfig, UiStrings } from './types';
 import { getStrings, fill } from './i18n';
 import { hasConsent, getConsent } from './consent';
+import { pickToggleColors, type ToggleColors } from './color';
 
 type ConsentCallback = (choices: ConsentChoices) => void;
 
-const STYLES = (cfg: ConsentKitConfig): string => `
+const STYLES = (cfg: ConsentKitConfig, toggle: ToggleColors): string => `
   :host { all: initial; }
   *, *::before, *::after { box-sizing: border-box; }
 
@@ -183,29 +184,39 @@ const STYLES = (cfg: ConsentKitConfig): string => `
     height: 0;
     position: absolute;
   }
+  /* Off: an outlined track with the knob at the left. On: a filled track with the knob at the
+     right. The outline and knob use the text colour, so the off state is visible on any banner
+     and the two states differ by shape and position, not only by colour. */
   .ck-slider {
     position: absolute;
     inset: 0;
-    background: rgba(255,255,255,0.2);
+    box-sizing: border-box;
+    border: 2px solid ${cfg.banner.textColor};
+    background: transparent;
     border-radius: 24px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, border-color 0.2s;
   }
   .ck-slider::before {
     content: '';
     position: absolute;
-    height: 18px;
-    width: 18px;
+    height: 14px;
+    width: 14px;
     left: 3px;
-    bottom: 3px;
-    background: #fff;
+    top: 50%;
+    margin-top: -7px;
+    background: ${cfg.banner.textColor};
     border-radius: 50%;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background 0.2s;
   }
-  .ck-toggle input:checked + .ck-slider { background: ${cfg.banner.accentColor}; }
-  .ck-toggle input:checked + .ck-slider::before { transform: translateX(20px); }
-  .ck-toggle input:disabled + .ck-slider { opacity: 0.5; cursor: not-allowed; }
-  .ck-toggle input:focus-visible + .ck-slider { outline: 3px solid #fff; outline-offset: 2px; }
+  .ck-toggle input:checked + .ck-slider { background: ${toggle.onFill}; border-color: ${toggle.onFill}; }
+  .ck-toggle input:checked + .ck-slider::before { transform: translateX(20px); background: ${toggle.onThumb}; }
+  .ck-toggle input:disabled + .ck-slider { opacity: 0.7; cursor: not-allowed; }
+  .ck-toggle input:focus-visible + .ck-slider { outline: 3px solid ${cfg.banner.textColor}; outline-offset: 2px; }
+
+  /* The state as a word under the switch, for people who do not read it from the knob. */
+  .ck-control { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; min-width: 56px; }
+  .ck-state { font-size: 11px; font-weight: 600; line-height: 1; }
 
   .ck-prefs-footer {
     padding: 16px 24px;
@@ -295,7 +306,7 @@ export class ConsentBanner {
 
     // Style
     const style = document.createElement('style');
-    style.textContent = STYLES(this.config);
+    style.textContent = STYLES(this.config, pickToggleColors(this.config.banner));
     this.root.appendChild(style);
 
     // Overlay (for center-popup)
@@ -500,10 +511,19 @@ export class ConsentBanner {
     const stored = hasConsent(this.config) ? getConsent()?.choices : undefined;
     input.checked = cat.locked ? true : (stored?.[cat.key] ?? cat.defaultEnabled);
     input.disabled = cat.locked;
+    input.setAttribute('role', 'switch');
     input.setAttribute('aria-labelledby', `ck-cat-label-${cat.key}`);
     input.setAttribute('aria-checked', String(input.checked));
+
+    // The state in words, for the eye. Screen readers get it from role="switch" and aria-checked.
+    const state = document.createElement('span');
+    state.className = 'ck-state';
+    state.setAttribute('aria-hidden', 'true');
+    state.textContent = input.checked ? this.t.stateOn : this.t.stateOff;
+
     input.addEventListener('change', () => {
       input.setAttribute('aria-checked', String(input.checked));
+      state.textContent = input.checked ? this.t.stateOn : this.t.stateOff;
     });
 
     this.toggles.set(cat.key, input);
@@ -514,7 +534,12 @@ export class ConsentBanner {
 
     toggleLabel.appendChild(input);
     toggleLabel.appendChild(slider);
-    row.appendChild(toggleLabel);
+
+    const control = document.createElement('div');
+    control.className = 'ck-control';
+    control.appendChild(toggleLabel);
+    control.appendChild(state);
+    row.appendChild(control);
 
     return row;
   }
