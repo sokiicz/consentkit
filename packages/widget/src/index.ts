@@ -8,7 +8,7 @@
  */
 
 import { startBlocking, applyConsent } from './blocker';
-import { initGCMDefaults, updateGCMConsent, pushConsentUpdateEvent } from './gcm';
+import { initGCMDefaults, initEarlyGCMDefaults, updateGCMConsent, pushConsentUpdateEvent } from './gcm';
 import {
   hasConsent,
   getConsent,
@@ -24,6 +24,13 @@ startBlocking();
 
 // Capture currentScript synchronously — it becomes null after the IIFE finishes
 const _currentScript = document.currentScript as HTMLScriptElement | null;
+
+// Consent Mode default before anything else can start, not after the config fetch
+// (see initEarlyGCMDefaults). Needs data-gcm="on" or an inline config.
+initEarlyGCMDefaults(
+  (window as typeof window & { __consentKitConfig?: ConsentKitConfig }).__consentKitConfig,
+  _currentScript?.getAttribute('data-gcm') === 'on'
+);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
