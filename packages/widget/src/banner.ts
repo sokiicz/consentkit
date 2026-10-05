@@ -154,7 +154,7 @@ const STYLES = (cfg: ConsentKitConfig, toggle: ToggleColors): string => `
     border-radius: 4px;
   }
   .ck-back-btn:hover { opacity: 1; }
-  .ck-back-btn:focus-visible { outline: 3px solid ${cfg.banner.accentColor}; }
+  .ck-back-btn:focus-visible { outline: 3px solid ${cfg.banner.textColor}; }
 
   .ck-categories { padding: 8px 0; overflow-y: auto; max-height: 320px; }
 
@@ -180,10 +180,15 @@ const STYLES = (cfg: ConsentKitConfig, toggle: ToggleColors): string => `
   }
   .ck-toggle input {
     opacity: 0;
-    width: 0;
-    height: 0;
     position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+    z-index: 1;
   }
+  .ck-toggle input:disabled { cursor: not-allowed; }
   /* Off: an outlined track with the knob at the left. On: a filled track with the knob at the
      right. The outline and knob use the text colour, so the off state is visible on any banner
      and the two states differ by shape and position, not only by colour. */
@@ -216,7 +221,7 @@ const STYLES = (cfg: ConsentKitConfig, toggle: ToggleColors): string => `
 
   /* The state as a word under the switch, for people who do not read it from the knob. */
   .ck-control { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; min-width: 56px; }
-  .ck-state { font-size: 11px; font-weight: 600; line-height: 1; }
+  .ck-state { font-size: 12px; font-weight: 600; line-height: 1; }
 
   .ck-prefs-footer {
     padding: 16px 24px;
@@ -628,8 +633,14 @@ export class ConsentBanner {
     return choices;
   }
 
+  // Set a switch from code and tell its own listener, so aria-checked and the state word follow.
+  private setToggle(input: HTMLInputElement, checked: boolean): void {
+    input.checked = checked;
+    input.dispatchEvent(new Event('change'));
+  }
+
   private handleAcceptAll(): void {
-    this.toggles.forEach((input) => { input.checked = true; });
+    this.toggles.forEach((input) => { this.setToggle(input, true); });
     this.onConsent(this.getChoices());
     this.dismiss();
   }
@@ -637,7 +648,7 @@ export class ConsentBanner {
   private handleRejectAll(): void {
     this.toggles.forEach((input, key) => {
       if (!this.config.categories.find((c) => c.key === key)?.locked) {
-        input.checked = false;
+        this.setToggle(input, false);
       }
     });
     this.onConsent(this.getChoices());
