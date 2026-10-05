@@ -379,6 +379,17 @@ Download `consent-log.csv` via your hosting file manager and open in Excel.
 visitor_id | timestamp | choices (JSON) | banner_version | user_agent | logged_at
 ```
 
+### Consent statistics
+
+How many visitors accept all, reject all or choose a custom mix, per day, as counts only (no visitor id, no user agent, no row is printed). Needs Node 22.5 or newer for the SQLite log.
+
+```bash
+node scripts/consent-summary.mjs --sqlite apps/server/data/consent-log.db --since 2026-10-05 --tz Europe/Prague
+node scripts/consent-summary.mjs --csv-log consent-log.csv --format csv
+```
+
+By default each visitor is counted once, by their first decision, on the day it was made. `--events` counts every logged decision instead. Why: a returning visitor who changes their mind is logged again, and visitors whose browser sends Global Privacy Control or Do Not Track were logged as "reject all" at every page view until 1.2.3, which would inflate the reject numbers in older logs. Those automatic rejects look exactly like manual ones in the log, so they still count as "reject all" once per visitor. Records with an unreadable time or unreadable choices are left out and reported on stderr. The log itself holds visitor ids, so run the script where you are allowed to read it.
+
 ---
 
 ## Self-Hosting Guide

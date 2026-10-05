@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **`scripts/consent-summary.mjs`:** daily summary of accept all, reject all and custom choices from the SQLite or CSV consent log, counts only, each visitor counted once by default. See the README, chapter Consent Log Access.
+
 ## 1.2.3 (2026-10-07)
 
 ### Privacy: GPC and Do Not Track visitors are logged once, not on every page

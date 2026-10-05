@@ -8,7 +8,8 @@
     "dev": "concurrently \"pnpm --filter @consentkit/widget dev\" \"pnpm --filter @consentkit/server dev\"",
     "start": "pnpm --filter @consentkit/server start",
     "lint": "pnpm -r lint",
-    "zip": "node scripts/make-zip.mjs"
+    "zip": "node scripts/make-zip.mjs",
+    "consent-summary": "node scripts/consent-summary.mjs"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
