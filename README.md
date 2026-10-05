@@ -254,7 +254,7 @@ If your site defines its own `gtag()` before ConsentKit, ConsentKit uses it. You
 | `strings` | object | Optional overrides for the built-in texts, see [Languages](#languages) |
 | `banner.position` | string | `bottom-bar` · `bottom-left` · `bottom-right` · `center-popup` |
 | `banner.primaryColor` | string | Banner background colour |
-| `banner.accentColor` | string | Colour of the toggle switches and the re-open button. Buttons use `textColor` and `primaryColor` |
+| `banner.accentColor` | string | Fills an "on" toggle switch when it stands out from `primaryColor` by at least 3:1, otherwise `textColor` does. Also the re-open button. Buttons use `textColor` and `primaryColor` |
 | `banner.privacyPolicyUrl` | string | Link shown in banner description |
 | `banner.showReopenButton` | boolean | Floating re-open button after consent, default `true`. Set `false` only together with your own link, see [Open preferences from your own link](#open-preferences-from-your-own-link) |
 | `categories[].key` | string | Used in `data-ck-category` attributes |
@@ -283,6 +283,8 @@ Banner title, description, button labels and category texts come from your confi
 | `alwaysOn` | Always On | Vždy zapnuto |
 | `categoryToggle` | {label} cookies | Cookies: {label} |
 | `reopenerLabel` | Manage cookie preferences | Nastavení cookies |
+| `stateOn` | On | Zapnuto |
+| `stateOff` | Off | Vypnuto |
 
 Override any of them, or write your own language, with `strings`:
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.2 (2026-10-05)
+
+### What visitors see: the toggle switches in the preferences panel are readable
+
+- **The "off" switch was almost invisible on a light banner.** Its track was 20 % white and its knob white, so on a white dialog an off switch could not be seen. Now every switch has an outline and a knob in the banner's text colour: off is an outlined track with the knob on the left, on is a filled track with the knob on the right. The two states differ by shape and position, not only by colour, and an off switch has about the same contrast as the text (15:1 on the default and on a white banner).
+- **The state is also written out.** Under each switch a word says "On" or "Off" ("Zapnuto" and "Vypnuto" with `"lang": "cs"`; override with `strings.stateOn` and `strings.stateOff`). The checkbox is now marked as a switch (`role="switch"`) with `aria-checked`, so a screen reader announces it as a switch that is on or off.
+- **The accent colour fills an "on" switch only when it stands out.** If `accentColor` has at least 3:1 contrast with the banner it fills the track, otherwise the text colour does. Teal `#00a8a9` on white is about 2.9:1, so a white banner with that accent now gets a dark "on" track instead of a teal one. The knob takes whichever banner colour contrasts more with the track.
+- **The keyboard focus ring of a switch is drawn in the text colour**, not in fixed white, so it shows on light banners.
+- Nothing else changes: all categories still start off, the banner text is untouched, Accept All and Reject All look as before. Checked with a browser, not with a screen reader: please test with NVDA or VoiceOver before you rely on the announcements.
+
 ## 1.2.1 (2026-10-05)
 
 ### Fix: Google Consent Mode did not reach Google tags (earlier versions, when the page defined no `gtag()` of its own)
