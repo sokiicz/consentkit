@@ -15,7 +15,10 @@
                    if you don't want server-side logging)
 
     Put these lines BEFORE any analytics or marketing scripts.
-    The defer attribute ensures it does not slow your page down.
+    Using Google Tag Manager or Google Analytics with Consent Mode? Then remove defer, put
+    this script before the Google tag and add data-gcm="on" (it makes the widget send the
+    default consent state, everything denied, the moment it runs). Without Consent Mode
+    leave the attribute out.
   -->
   <script
     src="/consentkit/widget.js"

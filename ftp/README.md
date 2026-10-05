@@ -72,6 +72,8 @@ Paste this before the `</head>` tag on every page of your website:
 
 If you don't want consent logging, remove the `data-log-url` line.
 
+**Using Google Tag Manager or Google Analytics with Consent Mode?** Remove `defer`, put the script before the Google tag and add `data-gcm="on"` (and set `googleConsentMode.enabled` to `true` in the config). Otherwise the Google tag can start before any consent state exists and treats consent as granted. Details: the main README, chapter Google Consent Mode v2 Setup. Without Consent Mode do not add `data-gcm`.
+
 That's it. Reload your page — the banner will appear.
 
 ---

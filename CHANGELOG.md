@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1 (2026-10-05)
+
+### Fix: Google Consent Mode did not reach Google tags (all earlier versions)
+
+- **`gtag()` pushed an array.** Google tags (gtag.js, Google Tag Manager) only read commands that are pushed as the `arguments` object. ConsentKit pushed an array, which looks the same in the `dataLayer` but is ignored, so `consent default` and `consent update` never took effect: GA4, Google Signals and Google Ads behaved as if consent was granted, whatever the visitor chose. Fixed: the widget's `gtag()` pushes `arguments`. Checked against Google's real `gtag.js`: before the fix its consent state stays unset, after the fix it shows the default as denied and `update` as granted or denied after the choice.
+- **The default came too late.** It was sent only after the config had been fetched, so a Google tag could start first and run without a consent default. New: add `data-gcm="on"` to the script tag and the widget sends the default (all `denied`, `security_storage` `granted`) the moment the script runs. With an inline config (`window.__consentKitConfig`) it uses that config's defaults at once, no attribute needed. If the Google tag already started when the default is sent, the console warns.
+- **What you should do:** replace `widget.js`, load the script synchronously (no `defer`, no `async`) before the Google tag and add `data-gcm="on"` when you use Consent Mode with `data-config`. Sites that define their own correct `gtag()` before ConsentKit keep working, ConsentKit uses theirs. Cookies and hits that Google tags already created before the fix are not undone; consider your own assessment of what a site collected without valid consent.
+
 ## 1.2.0 (2026-10-03)
 
 ### What visitors see (read this before you upgrade)

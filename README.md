@@ -106,6 +106,8 @@ Paste before `</head>` on every page:
 
 Remove `data-log-url` if you don't need server-side logging.
 
+**Using Google Tag Manager or Google Analytics with Consent Mode?** Load the script without `defer`, before the Google tag, and add `data-gcm="on"`. See [Google Consent Mode v2 Setup](#google-consent-mode-v2-setup).
+
 **See [`ftp/README.md`](ftp/README.md) for the full FTP guide including WordPress instructions.**
 
 ---
@@ -191,12 +193,12 @@ Add `data-ck-category` + `data-ck-src` to any script you want blocked until cons
 
 ConsentKit fires all seven GCM v2 parameters (`security_storage` as `"granted"`, the rest as `"denied"`) before any user interaction — which is the requirement from Google for EEA visitors.
 
-**Load ConsentKit before your Google tag:**
+**Load ConsentKit before your Google tag, without `defer` or `async`, and tell it you use Consent Mode.** A Google tag (GA4, Google Ads, Tag Manager) that starts before a consent default exists treats consent as granted. With `data-gcm="on"` the widget sends the default (everything `denied`, `security_storage` `granted`) the moment the script runs, before the config has been fetched. If your config is inline (`window.__consentKitConfig`, set before the script) you do not need the attribute, the widget uses the defaults from that config right away.
 
 ```html
 <head>
-  <!-- 1. ConsentKit first -->
-  <script src="https://YOUR_DOMAIN/widget.js" defer></script>
+  <!-- 1. ConsentKit first, synchronous -->
+  <script src="https://YOUR_DOMAIN/widget.js" data-config="/consentkit/consentkit.config.json" data-gcm="on"></script>
 
   <!-- 2. Google tag second -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -208,6 +210,10 @@ ConsentKit fires all seven GCM v2 parameters (`security_storage` as `"granted"`,
   </script>
 </head>
 ```
+
+If your site defines its own `gtag()` before ConsentKit, ConsentKit uses it. Your own `gtag` must push the `arguments` object (`function gtag(){dataLayer.push(arguments);}`), Google ignores commands pushed as arrays.
+
+**Check that it works:** open the console on a fresh visit and run `Object.prototype.toString.call(dataLayer[0])`. It should say `[object Arguments]` and `dataLayer[0][1]` should be `"default"`. Before the visitor decides, a Google tag must not set `_ga` cookies or send hits with granted consent.
 
 **Enable GCM in your config:**
 
