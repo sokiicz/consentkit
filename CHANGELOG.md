@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.3 (2026-10-07)
+
+### Privacy: GPC and Do Not Track visitors are logged once, not on every page
+
+- A visitor whose browser sends Global Privacy Control or Do Not Track gets no banner and is treated as "reject all". Until now that decision was written again on every page view: a new log row (with the visitor id and user agent) and a rewritten stored record each time. Now the widget still applies "denied" (script blocking, Consent Mode) on every page, but records and logs it only once: when the stored record already says everything is rejected for the current config version, nothing more is stored or sent. If the stored choice was different (an earlier "accept all", or an older config version), the rejection is recorded once.
+- The README's statement that the decision is recorded for the audit trail still holds, once per visitor.
+- Consent statistics: logs written by earlier versions still contain one row per page view for these visitors; counting each visitor once (the default of `scripts/consent-summary.mjs`, when released) is the way to read them.
+
 ## 1.2.2 (2026-10-05)
 
 ### What visitors see: the toggle switches in the preferences panel are readable

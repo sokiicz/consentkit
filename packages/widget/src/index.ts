@@ -92,23 +92,23 @@ async function init(): Promise<void> {
   const banner = new ConsentBanner(config, (choices) => handleVisitorChoice(config, logUrl, choices));
   activeBanner = banner;
 
-  // ─── Step 3: Global Privacy Control — auto-reject, no banner ────────────────
-  if (shouldHonorGPC()) {
+  // ─── Step 3: Global Privacy Control / Do Not Track — auto-reject, no banner ─
+  if (shouldHonorGPC() || shouldHonorDNT()) {
     const choices = buildAllDeniedChoices(config);
-    setConsent(config, choices);
+    // Applied on every page view. But the decision is recorded (and logged to the server)
+    // only once per visitor: when the stored record already says "everything rejected"
+    // for this config version, a repeat would only add a row and a visitor id per page.
+    const stored = hasConsent(config) ? getConsent() : null;
+    const alreadyRecorded =
+      !!stored && Object.keys(choices).every((key) => stored.choices[key] === choices[key]);
+    if (!alreadyRecorded) {
+      setConsent(config, choices);
+    }
     applyConsent(choices);
     updateGCMConsent(config, choices);
-    await logConsentToServer(logUrl, config, choices);
-    return;
-  }
-
-  // ─── DNT — treat as reject-all ───────────────────────────────────────────────
-  if (shouldHonorDNT()) {
-    const choices = buildAllDeniedChoices(config);
-    setConsent(config, choices);
-    applyConsent(choices);
-    updateGCMConsent(config, choices);
-    await logConsentToServer(logUrl, config, choices);
+    if (!alreadyRecorded) {
+      await logConsentToServer(logUrl, config, choices);
+    }
     return;
   }
 

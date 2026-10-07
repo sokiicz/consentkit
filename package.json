@@ -1,7 +1,7 @@
 {
   "name": "consentkit",
   "private": true,
-  "version": "1.2.2",
+  "version": "1.2.3",
   "scripts": {
     "build": "pnpm --filter @consentkit/widget build && pnpm --filter @consentkit/server build",
     "build:widget": "pnpm --filter @consentkit/widget build",
