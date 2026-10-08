@@ -173,7 +173,7 @@ async function readSqliteLog(file) {
     const db = new Database(file, { readonly: true });
     try { return db.prepare(query).all().map(map); } finally { db.close(); }
   } catch {
-    throw new Error('Reading SQLite needs Node 22.5 or newer (node:sqlite) or better-sqlite3 installed in apps/server.');
+    throw new Error('Reading SQLite needs Node 22 with node:sqlite (tested on 22.23; older 22.x may need --experimental-sqlite) or better-sqlite3 installed in apps/server.');
   }
 }
 
@@ -270,5 +270,6 @@ async function main() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main();
+  // Only the first line of an error, never row data.
+  main().catch((e) => { console.error(e && e.message ? String(e.message).split('\n')[0] : 'Unexpected error.'); process.exit(1); });
 }

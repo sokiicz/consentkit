@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- **`scripts/consent-summary.mjs`:** daily summary of accept all, reject all and custom choices from the SQLite or CSV consent log, counts only, each visitor counted once by default. See the README, chapter Consent Log Access.
+- **`scripts/consent-summary.mjs`:** daily summary of accept all, reject all and custom choices from the SQLite or CSV consent log, counts only, each visitor counted once by default. See the README, Consent Log Access, Consent statistics.
 
 ## 1.2.3 (2026-10-07)
 

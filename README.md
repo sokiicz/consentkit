@@ -381,14 +381,18 @@ visitor_id | timestamp | choices (JSON) | banner_version | user_agent | logged_a
 
 ### Consent statistics
 
-How many visitors accept all, reject all or choose a custom mix, per day, as counts only (no visitor id, no user agent, no row is printed). Needs Node 22.5 or newer for the SQLite log.
+How many visitors accept all, reject all or choose a custom mix, per day, as counts only (no visitor id, no user agent, no row is printed). A "visitor" here is a visitor id, which belongs to one browser, not to one person: the same person in a private window, after clearing browser data or on another device counts again. Reading the SQLite log needs a recent Node.js (tested on 22.23; older 22.x versions may need the `--experimental-sqlite` flag) or `better-sqlite3` installed in `apps/server`. The CSV log works without either.
 
 ```bash
 node scripts/consent-summary.mjs --sqlite apps/server/data/consent-log.db --since 2026-10-05 --tz Europe/Prague
 node scripts/consent-summary.mjs --csv-log consent-log.csv --format csv
 ```
 
-By default each visitor is counted once, by their first decision, on the day it was made. `--events` counts every logged decision instead. Why: a returning visitor who changes their mind is logged again, and visitors whose browser sends Global Privacy Control or Do Not Track were logged as "reject all" at every page view until 1.2.3, which would inflate the reject numbers in older logs. Those automatic rejects look exactly like manual ones in the log, so they still count as "reject all" once per visitor. Records with an unreadable time or unreadable choices are left out and reported on stderr. The log itself holds visitor ids, so run the script where you are allowed to read it.
+By default each visitor is counted once, by their first decision, on the day it was made. `--events` counts every logged decision instead. A returning visitor who changes their mind is logged again, and until 1.2.3 visitors whose browser sends Global Privacy Control or Do Not Track were logged as "reject all" at every page view. With `--events` on a log from before 1.2.3 the reject count is inflated by those repeated rows; use it only when you want to count log rows.
+
+Visitors whose browser sends Global Privacy Control or Do Not Track never see the banner, and the log records them as "reject all". The log cannot tell these automatic rejections from a visitor who clicked Reject All, so the `reject_all` count and share include both. Read it as "rejected, by choice or by browser setting", not as the share of people who clicked a button. This is also true for logs written by 1.2.3 and later, which record such a visitor once per browser and config version instead of on every page.
+
+Records with an unreadable time or unreadable choices are left out and reported on stderr (in the default mode a visitor whose first record is unreadable is left out entirely). The log itself holds visitor ids and user agents, so run the script where you are allowed to read it. On a small site the daily counts are close to individual decisions: do not publish them per day. These counts describe the log, they are not proof of consent or a compliance report.
 
 ---
 
