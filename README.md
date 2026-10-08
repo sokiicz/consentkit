@@ -340,7 +340,7 @@ When `navigator.globalPrivacyControl === true` (Brave, Firefox + uBlock, DuckDuc
 - Banner is **not shown**
 - All non-necessary categories silently rejected
 - GCM v2 updated immediately
-- The decision is recorded once for the audit trail, not again on every page view
+- The decision is recorded once per browser and config version for the audit trail, not on every page view (a failed log request is not retried)
 
 Required under CPRA (California). Recommended best practice under GDPR.
 
